@@ -27,26 +27,42 @@
           v-hasPermi="['system:quyu:add']"
         >新增</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-sort"
+          size="mini"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table
+       v-if="refreshTable"
       v-loading="loading"
       :data="quyuList"
       row-key="id"
-      default-expand-all
+      
+       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <!-- <el-table-column label="父区域id" align="center" prop="parentId" /> -->
-      <el-table-column label="区域名称" align="center" prop="name" />
+     
+      <el-table-column label="设备名称"  prop="name" width="260" />
+       <el-table-column label="设备id" align="center" prop="id" />
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
-      <el-table-column label="描述" align="center" prop="note" />
+      <!-- <el-table-column label="部件名称" align="center" prop="note" /> -->
       <el-table-column label="创建时间" align="center" prop="createTime" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status" />
+       <el-table-column prop="status" label="状态" width="100">
+        <template slot-scope="scope">
+          <dict-tag :options="statusOptions" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -80,21 +96,30 @@
         <el-form-item label="父区域id" prop="parentId">
           <treeselect v-model="form.parentId" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择父区域id" />
         </el-form-item>
-        <el-form-item label="区域名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入区域名称" />
+        <el-form-item label="部件名称" prop="note">
+          <el-input v-model="form.note"  placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="设备名称" prop="name">
+          <el-input v-model="form.name" disabled placeholder="请输入区域名称" />
         </el-form-item>
         <el-form-item label="显示顺序" prop="orderNum">
           <el-input v-model="form.orderNum" placeholder="请输入显示顺序" />
         </el-form-item>
-        <el-form-item label="描述" prop="note">
-          <el-input v-model="form.note" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="状态">
-           <el-input v-model="form.status" placeholder="请输入状态" />
-        </el-form-item>
-        <el-form-item label="删除标志" prop="delFlag">
+        
+      
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                  v-for="dict in statusOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictValue"
+                >{{dict.dictLabel}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          
+        <!-- <el-form-item label="删除标志" prop="delFlag">
           <el-input v-model="form.delFlag" placeholder="请输入删除标志" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -128,6 +153,10 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 重新渲染表格状态
+      refreshTable: true,
+      // 状态数据字典
+      statusOptions: [],
       // 查询参数
       queryParams: {
         name: null,
@@ -141,6 +170,9 @@ export default {
   },
   created() {
     this.getList();
+    this.getDicts("sys_normal_disable").then(response => {
+      this.statusOptions = response.data;
+    });
   },
   methods: {
     /** 查询设备区域列表 */
@@ -162,6 +194,16 @@ export default {
         children: node.children
       };
     },
+    
+    /** 展开/折叠操作 */
+    toggleExpandAll() {
+      this.refreshTable = false;
+      this.isExpandAll = !this.isExpandAll;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
+    },
+
 	/** 查询部门下拉树结构 */
     getTreeselect() {
       listQuyu().then(response => {
