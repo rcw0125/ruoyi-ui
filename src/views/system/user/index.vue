@@ -417,6 +417,7 @@ export default {
       roleOptions: [],
         // 班别数据字典
       teamOptions: [],
+      curDeptId: undefined,
       // 表单参数
       form: {},
       defaultProps: {
@@ -533,6 +534,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
+      this.curDeptId= data.id;
       this.queryParams.deptId = data.id;
       this.getList();
     },
@@ -608,6 +610,9 @@ export default {
     handleAdd() {
       this.reset();
       this.getTreeselect();
+      if (this.curDeptId != undefined) {
+        this.form.deptId = this.curDeptId;
+      }
       getUser().then(response => {
         this.postOptions = response.posts;
         this.roleOptions = response.roles;

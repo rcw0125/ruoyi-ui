@@ -155,6 +155,7 @@ export default {
       open: false,
       // 重新渲染表格状态
       refreshTable: true,
+      isExpandAll:false,
       // 状态数据字典
       statusOptions: [],
       // 查询参数
@@ -165,6 +166,12 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        parentId: [
+          { required: true, message: "父区域id不能为空", trigger: "blur" }
+        ],
+        note: [
+          { required: true, message: "描述不能为空", trigger: "blur" }
+        ],
       }
     };
   },

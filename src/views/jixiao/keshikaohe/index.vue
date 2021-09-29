@@ -13,7 +13,7 @@
         <el-row>
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12"  :inline="true">
             <el-form-item  label="被考核人编码" prop="useraccount"  >
-              <el-input v-model="form.useraccount" disabled placeholder="被考核人编码" class="redcolor"/>      
+              <el-input v-model="form.useraccount" readonly placeholder="被考核人编码" class="redcolor"/>      
             </el-form-item>           
           </el-col>
          <el-col :xs="24" :sm="10" :md="10" :lg="10" :xl="10">
@@ -30,26 +30,36 @@
         <el-row >
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" >
             <el-form-item label="被考核人" prop="nickname">
-              <el-input v-model="form.nickname" disabled placeholder="被考核人" />
+              <el-input v-model="form.nickname" readonly placeholder="被考核人" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" >
             <el-form-item label="被考核单位" prop="deptname">
-              <el-input v-model="form.deptname" disabled  placeholder="被考核单位" />
+              <el-input v-model="form.deptname" readonly  placeholder="被考核单位" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-            <el-form-item label="绩效扣分" prop="jxkf">
-              <el-input oninput="value=value.replace(/[^\d.]/g,'')" maxlength="5" v-model="form.jxkf" />
+            <el-form-item label="考核金额(元)" prop="jxkf">
+              <el-input oninput="value=value.replace(/[^\d]/g,'')" maxlength="6" v-model="form.jxkf" />
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+            <el-form-item label="考核日期" prop="khrq">
+               <el-date-picker
+                   v-model="form.khrq"
+                   type="date"   
+                   value-format="yyyy-MM-dd"        
+                   placeholder="选择日期">
+              </el-date-picker>       
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
              <el-form-item label="安全扣分" prop="aqkf">
-              <el-input oninput="value=value.replace(/[^\d.]/g,'')" maxlength="5" v-model="form.aqkf" />
+              <el-input oninput="value=value.replace(/[^\d.]/g,'')" maxlength="8" v-model="form.aqkf" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
         
@@ -106,16 +116,7 @@
 
         </el-row>
         <el-row>
-           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-            <el-form-item label="考核日期" prop="khrq">
-               <el-date-picker
-                   v-model="form.khrq"
-                   type="date"   
-                   value-format="yyyy-MM-dd"        
-                   placeholder="选择日期">
-              </el-date-picker>       
-            </el-form-item>
-          </el-col>
+          
           <!-- 考核类型隐藏不显示 -->
           <el-col :span="12">
             <el-form-item   prop="khtype">
@@ -380,8 +381,8 @@ export default {
        this.$set(this.form, "khxz", "生产考评");
        this.$set(this.form, "khzl", "结果考评");
        this.$set(this.form, "team", "白班");
-       this.$set(this.form, "aqkf", 0);
-       this.$set(this.form, "jxkf", 0.5);
+      //  this.$set(this.form, "aqkf", 0);
+       this.$set(this.form, "jxkf", 50);
        this.$set(this.form, "khtype", "科室考评");
 
   },
@@ -401,7 +402,12 @@ export default {
     submitForm() {
       //提交表单之前，要先对表单进行验证
        this.$refs["form"].validate(valid => {
+       
         if (valid) {
+            if(this.form.jxkf<10){
+              this.$message.error('考核金额太小，最低10元！');
+              return;
+            }
           //先禁止再次点击
            this.zuZhiDianJi();    
            addKaohe(this.form).then(response => {

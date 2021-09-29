@@ -1,0 +1,228 @@
+<template>
+  <div class="app-container">
+   
+
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="设备id" prop="sbid" v-show="false">
+          <el-input v-model="form.sbid" placeholder="请输入设备id" />
+        </el-form-item>
+        <el-form-item label="设备名称" prop="sbname">
+          <el-input v-model="form.sbname" placeholder="请输入设备名称" />
+        </el-form-item>
+        <el-form-item label="标准id" v-show="false" prop="bzhid">
+          <el-input v-model="form.bzhid" placeholder="请输入标准id" />
+        </el-form-item>
+        
+        <el-form-item label="点检单位"  v-show="false" prop="dept">
+          <el-input v-model="form.dept" placeholder="请选择点检单位" />
+        </el-form-item>
+        <el-form-item label="点检班组"  prop="team">
+          <el-input v-model="form.team"  placeholder="请选择点检班组" />
+        </el-form-item>
+        <el-form-item label="点检类别" v-show="false" prop="leibie">
+          <el-input v-model="form.leibie"  placeholder="请选择点检类别" />
+        </el-form-item>
+        <el-form-item label="点检周期"  prop="zhouqi">
+           <el-input v-model="form.zhouqi"  placeholder="请选择点检周期" />
+        </el-form-item>
+        <el-form-item label="标准备注" v-show="false" prop="bzhnote">
+          <el-input v-model="form.bzhnote" placeholder="请输入标准备注" />
+        </el-form-item>
+        <el-form-item label="周应点检次数" v-show="false" prop="zhoucishu">
+          <el-input v-model="form.zhoucishu" placeholder="请输入周应点检次数" />
+        </el-form-item>
+        <el-form-item label="点检人" v-show="false" prop="djr">
+          <el-input v-model="form.djr" placeholder="请输入点检人" />
+        </el-form-item>
+        <!-- <el-form-item label="点检结果" prop="djresult">
+          <el-select v-model="form.djresult" placeholder="请选择点检结果">
+            <el-option
+              v-for="dict in djresultOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item> -->
+       
+       <el-form-item label="提示" prop="note">
+          <el-input v-model="form.note" placeholder="" />
+        </el-form-item>
+
+       <el-form-item label="点检内容">
+          <el-input v-model="form.djcontent" type="textarea" :rows=3 placeholder="请输入内容;异常时必须输入内容" />     
+        </el-form-item>
+        
+        
+      <el-form-item style="width:100%;">
+        <el-button
+           v-show="form.flag==0"
+          :loading="loading"
+          size="medium"
+          type="primary"
+          style="width:100%;"
+          @click="submitzhengchang"
+        >
+        点 检 正 常     
+        </el-button>
+      </el-form-item>
+        <el-form-item style="width:100%;">
+        <el-button
+          :loading="loading"
+          size="medium"
+          type="danger"
+          style="width:100%;"
+          @click="submityichang"
+        >
+         点 检 异 常
+        </el-button>
+      </el-form-item>
+      <el-form-item label="标准内容" prop="biaozhun">
+          <!-- <el-input v-model="form.biaozhun" type="textarea" placeholder="请输入内容" /> -->
+           <EditorReadOnly  v-model="form.biaozhun"  :min-height="192"/>
+        </el-form-item>
+        <!-- <el-form-item label="点检时刻" prop="djtime">
+          <el-date-picker clearable size="small"
+            v-model="form.djtime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择点检时刻">
+          </el-date-picker>
+        </el-form-item> -->
+        
+        <!-- <el-form-item label="是否可以点检" prop="flag">
+          <el-input v-model="form.flag" placeholder="请输入是否可以点检" />
+        </el-form-item> -->
+        <!-- <el-form-item label="点检日期" prop="djrq">
+          <el-date-picker clearable size="small"
+            v-model="form.djrq"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择点检日期">
+          </el-date-picker>
+        </el-form-item> -->
+      </el-form>
+      <!-- <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div> -->
+    
+  </div>
+</template>
+
+<script>
+import { listDianjianlist,getDianjianBiaoZhun, getDianjianlist, delDianjianlist, addDianjianlist, updateDianjianlist, exportDianjianlist } from "@/api/system/dianjianlist";
+// 富文本组件
+import EditorReadOnly from "@/components/EditorReadOnly"
+export default {
+  name: "Dianjian",
+  components: {
+    EditorReadOnly
+  },
+  data() {
+    return {
+      // 遮罩层
+      loading: false,
+     
+      
+      //路由参数
+      routerId: 0,
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        sbid: null,
+        sbname: null,
+        bzhid: null,
+        biaozhun: null,
+        dept: null,
+        team: null,
+        leibie: null,
+        zhouqi: null,
+        bzhnote: null,
+        zhoucishu: null,
+        djr: null,
+        djresult: null,
+        djcontent: null,
+        djtime: null,
+        note: null,
+        flag: null,
+        djrq: null
+      },
+      // 表单参数
+      form: {},
+      // 表单校验
+      rules: {
+      }
+    };
+  },
+  created() {
+    this.routerId = this.$route.params && this.$route.query.sid;
+    console.log(this.routerId);
+    getDianjianBiaoZhun(this.routerId).then(response => {
+        this.form = response.data;  
+      });
+    
+  },
+  methods: {
+    /** 查询点检记录列表 */
+  
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        sbid: null,
+        sbname: null,
+        bzhid: null,
+        biaozhun: null,
+        dept: null,
+        team: null,
+        leibie: null,
+        zhouqi: null,
+        bzhnote: null,
+        zhoucishu: null,
+        djr: null,
+        djresult: null,
+        djcontent: null,
+        djtime: null,
+        note: null,
+        flag: null,
+        djrq: null
+      };
+      this.resetForm("form");
+    },
+     
+      /** 提交按钮 */
+    submitzhengchang() {
+      this.form.djresult="正常";
+      addDianjianlist(this.form).then(response => {
+              this.msgSuccess("新增点检记录成功");    
+               this.handleClose();       
+            });
+     
+    },
+    
+    // 返回按钮，返回到欢迎界面
+    handleClose() {
+      this.$store.dispatch("tagsView/delView", this.$route);
+       this.$router.push({ path: "/index" });
+    },
+     /** 提交按钮 */
+    submityichang() {
+      if(this.form.djcontent==null){
+          this.$message.error('请填写点检内容！');
+        return;
+      };
+      this.form.djresult="异常";
+      addDianjianlist(this.form).then(response => {
+              this.msgSuccess("新增点检记录成功");   
+              this.handleClose();    
+            });
+    },
+
+  
+    
+   
+  }
+};
+</script>

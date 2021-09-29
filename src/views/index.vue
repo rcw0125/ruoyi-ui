@@ -4,11 +4,8 @@
       <el-col :sm="24" :lg="24">
         <blockquote class="text-warning" style="font-size: 14px">
           敢于创新 追求卓越
-          <br />
-          
-        
+          <br />     
           每天进步一点点
-          
           <br />
           持续改善，务实创新，力求突破
          <br />
@@ -22,26 +19,16 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <!-- <h2>若依后台管理框架</h2>
-        <p>
-          一直想做一款后台管理系统，看了很多优秀的开源项目但是发现没有合适自己的。于是利用空闲休息时间开始自己写一套后台系统。如此有了若依管理系统。，她可以用于所有的Web应用程序，如网站管理后台，网站会员中心，CMS，CRM，OA等等，当然，您也可以对她进行深度定制，以做出更强系统。所有前端后台代码封装过后十分精简易上手，出错概率低。同时支持移动客户端访问。系统会陆续更新一些实用功能。
-        </p>
-        <p>
-          <b>当前版本:</b> <span>v{{ version }}</span>
-        </p>
-        <p>
-          <el-tag type="danger">&yen;免费开源</el-tag>
-        </p> -->
-        <!-- <p>
-          <el-button
-            type="primary"
-            size="mini"
-            icon="el-icon-cloudy"
-            plain
-            @click="goTarget('https://gitee.com/y_project/RuoYi-Vue')"
-            >访问码云</el-button
-          > 
-        </p> -->
+         <!-- <button class="sweep" @click="media()">扫一扫</button>
+  
+    <textarea
+      class="result"
+      cols="76"
+      rows="6"
+      v-model="result"
+      placeholder="二维码识别结果！"
+    ></textarea>
+    <canvas class="canvas" ref="canvas"></canvas> -->
       </el-col>
 
      
@@ -89,18 +76,145 @@
 </template>
 
 <script>
+import jsQR from "jsqr";
+import Jimp from "jimp";
 export default {
   name: "index",
   data() {
     return {
+      // timer: null,
+      // result: "https://github.com/MuGuiLin",
+      
+      // isAnimation: true,
+      // audio: Object,
+      // video: Object,
+      // cvsele: Object,
+      // canvas: Object,
       // 版本号
-      version: "3.4.0",
+      version: "3.7.0",
     };
   },
+  //  mounted() {
+  //   this.audio = new Audio("../assets/tone.mp3");
+  //   this.video = document.createElement("video");
+  //   this.cvsele = this.$refs.canvas;
+  //   this.canvas = this.cvsele.getContext("2d");
+  // },
+
   methods: {
     goTarget(href) {
       window.open(href, "_blank");
     },
+    // draw(begin, end) {
+    //   this.canvas.beginPath();
+    //   this.canvas.moveTo(begin.x, begin.y);
+    //   this.canvas.lineTo(end.x, end.y);
+    //   this.canvas.lineWidth = 3;
+    //   this.canvas.strokeStyle = "red";
+    //   this.canvas.stroke();
+    // },
+
+    // sweep() {
+    //   if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+    //     const { videoWidth, videoHeight } = this.video;
+    //     this.cvsele.width = videoWidth;
+    //     this.cvsele.height = videoHeight;
+    //     this.canvas.drawImage(this.video, 0, 0, videoWidth, videoHeight);
+    //     try {
+    //       const img = this.canvas.getImageData(0, 0, videoWidth, videoHeight);
+    //       this.imgurl = img;
+    //       const obj = jsQR(img.data, img.width, img.height, {
+    //         inversionAttempts: "dontInvert",
+    //       });
+    //       if (obj) {
+    //         const loc = obj.location;
+    //         this.draw(loc.topLeftCorner, loc.topRightCorner);
+    //         this.draw(loc.topRightCorner, loc.bottomRightCorner);
+    //         this.draw(loc.bottomRightCorner, loc.bottomLeftCorner);
+    //         this.draw(loc.bottomLeftCorner, loc.topLeftCorner);
+    //         if (this.result != obj.data) {
+    //           this.audio.play();
+    //           this.result = obj.data;
+    //           this.isAnimation = false;
+    //           cancelAnimationFrame(this.timer);
+    //           console.info("识别结果：", obj.data);
+    //           setTimeout(() => {
+    //             this.cvsele.style.display = "none";
+    //           }, 1000);
+    //         }
+    //       } else {
+    //         console.error("识别失败，请检查二维码是否正确！");
+    //       }
+    //     } catch (err) {
+    //       console.error("识别失败，请检查二维码是否正确！", err);
+    //     }
+    //   }
+    //   if (this.isAnimation) {
+    //     this.timer = requestAnimationFrame(() => {
+    //       this.sweep();
+    //     });
+    //   }
+    // },
+    //  media() {
+    //   this.isAnimation = true;
+    //   this.cvsele.style.display = "block";
+    //   navigator.getUserMedia =
+    //     navigator.getUserMedia ||
+    //     navigator.webkitGetUserMedia ||
+    //     navigator.mozGetUserMedia ||
+    //     navigator.msGetUserMedia;
+    //   if (navigator.mediaDevices) {
+    //     navigator.mediaDevices
+    //       .getUserMedia({
+    //         video: { facingMode: "environment" },
+    //       })
+    //       .then((stream) => {
+    //         this.video.srcObject = stream;
+    //         this.video.setAttribute("playsinline", true);
+    //         this.video.setAttribute("webkit-playsinline", true);
+    //         this.video.addEventListener("loadedmetadata", () => {
+    //           this.video.play();
+    //           this.sweep();
+    //         });
+    //       })
+    //       .catch((error) => {
+    //         console.error(
+    //           error.name + "：" + error.message + "，" + error.constraint
+    //         );
+    //       });
+    //   } else if (navigator.getUserMedia) {
+    //     navigator.getUserMedia(
+    //       {
+    //         video: { facingMode: "environment" },
+    //       },
+    //       (stream) => {
+    //         this.video.srcObject = stream;
+    //         this.video.setAttribute("playsinline", true);
+    //         this.video.setAttribute("webkit-playsinline", true);
+    //         this.video.addEventListener("loadedmetadata", () => {
+    //           this.video.play();
+    //           this.sweep();
+    //         });
+    //       },
+    //       (error) => {
+    //         console.error(
+    //           error.name + "：" + error.message + "，" + error.constraint
+    //         );
+    //       }
+    //     );
+    //   } else {
+    //     if (
+    //       navigator.userAgent.toLowerCase().match(/chrome/) &&
+    //       location.origin.indexOf("https://") < 0
+    //     ) {
+    //       console.error(
+    //         "获取浏览器录音功能，因安全性问题，需要在localhost 或 127.0.0.1 或 https 下才能获取权限！"
+    //       );
+    //     } else {
+    //       alert("对不起：未识别到扫描设备!");
+    //     }
+    //   }
+    // }
   },
 };
 </script>

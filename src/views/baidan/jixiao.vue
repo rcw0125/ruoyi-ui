@@ -120,9 +120,9 @@
          <span class="text-danger">{{ scope.row.khnote }}</span>
       </template>
       </el-table-column>
-
-      <el-table-column label="绩效扣分" align="center" prop="jxkf" />
-      <el-table-column label="安全扣分" align="center" prop="aqkf" />
+         <el-table-column label="考核金额(元)" align="center" prop="jxkf" />
+      
+      <!-- <el-table-column label="安全扣分" align="center" prop="aqkf" /> -->
       <!-- <el-table-column label="考核等级" align="center" prop="khdj"  />
       <el-table-column label="考核性质" align="center" prop="khxz"  />
       <el-table-column label="考核种类" align="center" prop="khzl"  /> -->
