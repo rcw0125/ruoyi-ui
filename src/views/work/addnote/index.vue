@@ -20,7 +20,7 @@
          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
             <el-form-item label="部门" prop="code">
               <el-input
-              disabled
+                readonly
                 v-model="form.dept"
                 placeholder="部门"
               />
@@ -30,14 +30,14 @@
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
             <el-form-item label="岗位" prop="code">
               <el-input
-              disabled
+              readonly
                 v-model="form.post"
                 placeholder="岗位"
               />
             </el-form-item>
           </el-col>
            <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-             <el-form-item label="班组">
+             <el-form-item label="班组" prop="team">
               <el-select v-model="form.team" placeholder="选择班组">
                 <el-option
                   v-for="dict in teamOptions"
@@ -67,6 +67,15 @@
             </el-form-item>
           </el-col> -->
         </el-row>
+        <el-row>
+           <el-button
+          type="success"
+          icon="el-icon-edit"
+          round
+          @click="getLastDaynotecfg"
+        >获取我的最后一个交班记录，作为模板</el-button>
+        </el-row>
+        <br>
          <tinymce 
           @change="change"
           :defaultContent="form.note"
@@ -81,7 +90,7 @@
 </template>
 
 <script>
-import { listDaynote, getDaynote, delDaynote, addDaynote, updateDaynote, exportDaynote,getCfg } from "@/api/system/daynote";
+import { listDaynote, getDaynote, delDaynote, addDaynote, updateDaynote, exportDaynote,getCfg,getLastCfg } from "@/api/system/daynote";
 
 import Tinymce from "@/components/tinymceview";
 
@@ -148,8 +157,13 @@ export default {
             this.$message.error('部门为空，不能创建日志！');
             return;
           };
+          if(this.form.team==null){
+            this.$message.error('班组为空，不能创建日志！');
+            return;
+          };
           //先禁止再次点击
            this.zuZhiDianJi();   
+           this.form.note=this.text;
            addDaynote(this.form).then(response => {
               //console.log(response);
               if (response.code=== 200) {
@@ -184,6 +198,12 @@ export default {
       //const noticeId = '146';
       getCfg().then((response) => {
         this.form = response.data;
+      });
+    },
+     getLastDaynotecfg() {
+      //const noticeId = '146';
+      getLastCfg().then((response) => {
+        this.form.note = response.data.note;
       });
     },
   },

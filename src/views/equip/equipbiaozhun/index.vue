@@ -1,7 +1,43 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
-      <!-- <el-form-item label="设备ID" prop="sbid">
+    <el-row :gutter="20">
+        <!--部门数据-->
+      <el-col :span="5" :xs="24">
+        <div class="text-danger">{{sbname}}</div>
+        <div class="head-container">
+          <el-input
+            v-model="quyuName"
+            placeholder="请输入设备名称"
+            clearable
+            size="small"
+            prefix-icon="el-icon-search"
+            style="margin-bottom: 20px"
+          />
+        </div>
+        
+        <!-- <el-row> 
+              <h4 class="text-danger">
+             {{sbname}}
+          </h4>
+           </el-row> -->
+        <div class="head-container">
+          <el-tree
+             style="height: 700px; overflow-y: scroll;"
+            :data="quyuOptions"
+            :props="defaultProps"
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            ref="tree"
+            default-expand-all
+            @node-click="handleNodeClick"
+          />
+         
+        </div>
+      </el-col>
+      <!--用户数据-->
+      <el-col :span="19" :xs="24">
+         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="设备ID" v-show="false" prop="sbid">
         <el-input
           v-model="queryParams.sbid"
           placeholder="请输入设备ID"
@@ -9,8 +45,8 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
-      <!-- <el-form-item label="设备名称" prop="sbname">
+      </el-form-item> 
+      <el-form-item label="设备名称" v-show="false" prop="sbname">
         <el-input
           v-model="queryParams.sbname"
           placeholder="请输入设备名称"
@@ -18,14 +54,14 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
      
-        <el-form-item label="设备名称" prop="parentId" >
+        <el-form-item label="设备名称" v-show="false" prop="parentId" >
           <treeselect v-model="queryParams.sbid"  width="400px" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择设备名称" />
         </el-form-item>
          
       
-      <el-form-item label="点检路线" prop="name">
+      <!-- <el-form-item label="点检路线" prop="name">
         <el-input
           v-model="queryParams.name"
           placeholder="请输入点检路线"
@@ -33,7 +69,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="点检单位" v-show="routerId==1" prop="dept">
         <el-select v-model="queryParams.dept" placeholder="请选择点检单位" clearable size="small">
           <el-option
@@ -54,7 +90,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="点检周期" prop="zhouqi">
+      <!-- <el-form-item label="点检周期" prop="zhouqi">
         <el-select v-model="queryParams.zhouqi" placeholder="请选择点检周期" clearable size="small">
           <el-option
             v-for="dict in zhouqiOptions"
@@ -63,7 +99,7 @@
             :value="dict.dictLabel"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="备注" prop="note">
         <el-input
           v-model="queryParams.note"
@@ -130,13 +166,21 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="设备ID" align="center" prop="sbid" />
-      <el-table-column label="设备名称" align="center" prop="sbname" />
+      <el-table-column label="设备名称" align="center"   prop="sbname" width="180">
+       <template slot-scope="scope">
+          <router-link :to="'/equip/dianjian?sid=' + scope.row.sbid" class="link-type">
+            <span>{{ scope.row.sbname }}</span>
+          </router-link>
+        </template>
+      </el-table-column>
       <el-table-column label="点检路线" align="center" prop="name" />
       <el-table-column label="点检单位" align="center" prop="dept"  />
       <el-table-column label="点检班组" align="center" prop="team"  />
       <el-table-column label="点检类别" align="center" prop="leibie" />
       <el-table-column label="点检周期" align="center" prop="zhouqi"  />
-      <el-table-column label="周点检次数" align="center" prop="zhoucishu"   />
+      <!-- <el-table-column label="周点检次数" align="center" prop="zhoucishu"   /> -->
+      <el-table-column label="最近点检" align="center" prop="lasttime"  width="180" />
+         <el-table-column label="顺序" align="center" prop="ordernum" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -164,14 +208,24 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+      </el-col>
+    </el-row>  
+
+   
 
     <!-- 添加或修改点检标准对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         
-        <el-form-item label="设备名称" prop="sbid">
-          <treeselect v-model="form.sbid" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择设备名称" />
+        <!-- <el-form-item label="设备id" v-show="false" prop="sbid">
+          <el-input v-model="form.sbid" placeholder="请输入设备id" />
+        </el-form-item> -->
+        <el-form-item label="设备名称" prop="sbname">
+          <el-input v-model="form.sbname" readonly placeholder="请输入设备名称" />
         </el-form-item>
+        <!-- <el-form-item label="设备名称" prop="sbid">
+          <treeselect v-model="form.sbid" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择设备名称" />
+        </el-form-item> -->
        
         <el-form-item label="点检路线" prop="name">
           <el-input v-model="form.name" placeholder="请输入点检路线" />
@@ -179,8 +233,8 @@
         <el-form-item label="点检标准">
           <editor v-model="form.biaozhun" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="点检单位" v-show="routerId==1" prop="dept">
-          <el-select v-model="form.dept" placeholder="请选择点检单位">
+        <el-form-item label="点检单位" v-show="routerId==1"  prop="dept">
+          <el-select v-model="form.dept" @change="getPost" placeholder="请选择点检单位">
             <el-option
               v-for="dict in deptOptions"
               :key="dict.dictValue"
@@ -189,13 +243,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="点检班组" v-show="routerId==1" prop="team">
+        <el-form-item label="点检班组"  prop="team">
           <el-select v-model="form.team" placeholder="请选择点检班组">
             <el-option
               v-for="dict in teamOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
+              :key="dict.postName"
+              :label="dict.postName"
+              :value="dict.postName"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -219,9 +273,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="note">
-          <el-input v-model="form.note" type="textarea"  :rows="3" placeholder="请输入备注" />
+        <el-form-item label="顺序" prop="ordernum">
+          <!-- <el-input v-model="form.ordernum" placeholder="请输入顺序" /> -->
+           <el-input-number v-model="form.ordernum" controls-position="right" :min="0"  :max="500"/>
         </el-form-item>
+        <!-- <el-form-item label="备注" prop="note">
+          <el-input v-model="form.note" type="textarea"  :rows="3" placeholder="请输入备注" />
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -232,8 +290,9 @@
 </template>
 
 <script>
-import { listEquipbiaozhun,listMyEquipbiaozhun, getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun } from "@/api/system/equipbiaozhun";
+import { listEquipbiaozhun,listMyEquipbiaozhun, getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun,getPostinfo } from "@/api/system/equipbiaozhun";
 import { listQuyu } from "@/api/system/quyu";
+import { treeselect } from "@/api/system/quyu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
@@ -245,6 +304,15 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      defaultProps: {
+        children: "children",
+        label: "name"
+      },
+     // 已选择设备名称
+      sbname: "",
+      sbid: undefined,
+    // 设备区域名称
+      quyuName: undefined,
       
       // 导出遮罩层
       exportLoading: false,
@@ -298,11 +366,17 @@ export default {
         sbid: [
           { required: true, message: "设备ID不能为空", trigger: "blur" }
         ],
+        sbname: [
+          { required: true, message: "设备名称不能为空", trigger: "blur" }
+        ],
         name: [
           { required: true, message: "点检路线不能为空", trigger: "blur" }
         ],
         biaozhun: [
           { required: true, message: "点检标准不能为空", trigger: "blur" }
+        ],
+        team: [
+          { required: true, message: "点检班组不能为空", trigger: "change" }
         ],
         leibie: [
           { required: true, message: "点检类别不能为空", trigger: "change" }
@@ -312,7 +386,16 @@ export default {
         ],
       }
     };
+    
   },
+
+  watch: {
+    // 根据名称筛选部门树
+    quyuName(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
+
   created() {
     //this.routerId = this.$route.params && this.$route.params.id;
     //使用query，而不是param（router配置里的使用）
@@ -322,9 +405,9 @@ export default {
     this.getDicts("lgdept").then(response => {
       this.deptOptions = response.data;
     });
-    this.getDicts("sys_user_team").then(response => {
-      this.teamOptions = response.data;
-    });
+    // this.getDicts("sys_user_team").then(response => {
+    //   this.teamOptions = response.data;
+    // });
     this.getDicts("dianjianleibie").then(response => {
       this.leibieOptions = response.data;
     });
@@ -332,8 +415,29 @@ export default {
       this.zhouqiOptions = response.data;
     });
     this.getTreeselect();
+    if(this.routerId!=1){
+        this.getPost("0");
+    }
+    
   },
   methods: {
+
+        // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    // 节点单击事件 设备树点击
+    handleNodeClick(data) {
+     
+      this.queryParams.sbid = data.id;
+      this.sbname=data.name;
+      this.sbid= data.id;
+      
+      this.handleQuery();
+     
+    },
+
     /** 查询点检标准列表 */
     getList() {
       this.loading = true;
@@ -353,6 +457,15 @@ export default {
 
       }
       
+      
+    },
+
+    getPost(val){
+      console.log(val);
+      getPostinfo(val).then(response => {
+        this.teamOptions=response.posts;
+        console.log(response.posts);
+      });
     },
 
     /** 查询部门下拉树结构 */
@@ -373,22 +486,7 @@ export default {
         children: node.children
       };
     },
-    // 点检单位字典翻译
-    deptFormat(row, column) {
-      return this.selectDictLabel(this.deptOptions, row.dept);
-    },
-    // 点检班组字典翻译
-    teamFormat(row, column) {
-      return this.selectDictLabel(this.teamOptions, row.team);
-    },
-    // 点检类别字典翻译
-    leibieFormat(row, column) {
-      return this.selectDictLabel(this.leibieOptions, row.leibie);
-    },
-    // 点检周期字典翻译
-    zhouqiFormat(row, column) {
-      return this.selectDictLabel(this.zhouqiOptions, row.zhouqi);
-    },
+    
     // 取消按钮
     cancel() {
       this.open = false;
@@ -429,7 +527,8 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      
+      this.form.sbid=this.sbid;
+      this.form.sbname=this.sbname;
       this.open = true;
       this.title = "添加点检标准";
     },
@@ -505,3 +604,4 @@ export default {
   }
 };
 </script>
+

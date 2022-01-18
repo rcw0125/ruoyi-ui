@@ -1,5 +1,61 @@
 <template>
   <div class="app-container">
+      <el-menu :default-active="activeIndex" class="el-menu-demo" @select="handleSelect" mode="horizontal" background-color="#7ABC9A"  text-color="#fff"
+  active-text-color="#ffd04b" >
+
+  <el-submenu index="1">
+    <template slot="title" > <i class="el-icon-location"></i>生产技术科</template>
+    <el-menu-item index="值班厂长">值班厂长</el-menu-item>
+    <el-menu-item index="调度">调度</el-menu-item>
+  </el-submenu>
+
+   <el-submenu index="2">
+    <template slot="title"><i class="el-icon-s-home"></i>冶炼车间</template>
+    <el-menu-item index="转炉作业长">转炉作业长</el-menu-item>   
+    <el-menu-item index="2#转炉炉长">2#转炉炉长</el-menu-item>
+    <el-menu-item index="3#转炉炉长">3#转炉炉长</el-menu-item>
+    <el-menu-item index="4#转炉炉长">4#转炉炉长</el-menu-item>
+    <el-menu-item index="炉下渣跨">炉下渣跨</el-menu-item>
+    <el-menu-item index="皮带上料">皮带上料</el-menu-item>
+    <el-menu-item index="废钢场">废钢场</el-menu-item>
+  </el-submenu>
+   
+   <el-submenu index="3">
+    <template slot="title"><i class="el-icon-c-scale-to-original"></i>精炼车间</template>
+    <el-menu-item index="1#精炼炉长">1#精炼炉长</el-menu-item>
+    <el-menu-item index="2#精炼炉长">2#精炼炉长</el-menu-item>
+    <el-menu-item index="3#精炼炉长">3#精炼炉长</el-menu-item>
+    <el-menu-item index="RH精炼炉长">RH精炼炉长</el-menu-item>
+    <el-menu-item index="4#精炼炉长">4#精炼炉长</el-menu-item>
+    <el-menu-item index="5#精炼炉长">5#精炼炉长</el-menu-item> 
+  </el-submenu>
+  
+   <el-submenu index="4">
+    <template slot="title"><i class="el-icon-setting"></i>连铸车间</template>
+    <el-menu-item index="3#连铸机长">3#连铸机长</el-menu-item>
+    <el-menu-item index="4#连铸机长">4#连铸机长</el-menu-item>
+    <el-menu-item index="5#连铸机长">5#连铸机长</el-menu-item>
+    <el-menu-item index="连铸作业长">连铸作业长</el-menu-item>
+    <el-menu-item index="6#连铸机长">6#连铸机长</el-menu-item>
+  </el-submenu>
+   <el-submenu index="5">
+    <template slot="title"><i class="el-icon-document"></i>脱硫车间</template>
+    <el-menu-item index="混铁炉">混铁炉</el-menu-item>
+    <el-menu-item index="铁水脱硫">铁水脱硫</el-menu-item>
+    <el-menu-item index="合金准备">合金准备</el-menu-item>
+    <el-menu-item index="上件">上件</el-menu-item>
+  </el-submenu>
+   <el-submenu index="6">
+    <template slot="title"><i class="el-icon-s-custom"></i>维修车间</template>
+    <el-menu-item index="冶炼维修作业长">冶炼维修作业长</el-menu-item>
+    <el-menu-item index="连铸维修作业长">连铸维修作业长</el-menu-item>
+    <el-menu-item index="天车作业长">天车作业长</el-menu-item>
+  </el-submenu>
+
+ 
+
+  
+</el-menu>
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="日期" prop="logtime">
         <el-date-picker clearable size="small"
@@ -20,7 +76,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="岗位" prop="post">
-        <el-select v-model="queryParams.post" placeholder="请选择项目"  clearable size="small">
+        <el-select v-model="queryParams.post" placeholder="请选择项目" @change="handleQuery"  clearable size="small">
           <el-option
             v-for="dict in postOptions"
             :key="dict.code"
@@ -67,7 +123,7 @@
           v-hasPermi="['system:daynote:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -77,7 +133,7 @@
           @click="handleUpdate"
           v-hasPermi="['system:daynote:edit']"
         >修改</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -99,11 +155,16 @@
           v-hasPermi="['system:daynote:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
     </el-row>
 
-    <el-table v-loading="loading" :data="daynoteList"  @row-dblclick="dbSelected" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="daynoteList" :default-expand-all="true"  @row-dblclick="dbSelected" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="内容" align="center" type="expand">
+      <template slot-scope="scope">
+          <div  v-html="scope.row.note" />
+        </template>
+      </el-table-column>
       <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="日期" align="center" prop="logtime" width="180">
         <template slot-scope="scope">
@@ -112,16 +173,29 @@
       </el-table-column>
       <el-table-column label="单位" align="center" prop="dept"  />
       <el-table-column label="岗位" align="center" prop="post" />
-      <el-table-column label="记录人" align="center" prop="name" />
-      <!-- <el-table-column label="内容" align="center" prop="note" /> -->
+      <el-table-column label="记录人" align="center" prop="name" >
+         <template slot-scope="scope">
+       <el-tag>{{scope.row.name}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="班组" align="center" prop="team" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="状态" align="center" prop="status" >
+      <template slot-scope="scope">
+         
+          <el-tag :type="scope.row.status == '已交班' ? 'success' : 'danger'">{{scope.row.status}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
         <!-- <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {H}-{M}-{s}') }}</span>
         </template> -->
    
-      <el-table-column label="交班时间" align="center" prop="updateTime" width="180"/>
+      <el-table-column label="交班时间" align="center" prop="updateTime" width="180">
+       <template slot-scope="scope">
+         
+          <span  v-show="scope.row.status == '已交班'">{{scope.row.updateTime}}</span>
+        </template>
+      </el-table-column>
         
    
       <!-- <el-table-column label="接班时间" align="center" prop="jiebanTime" width="180">
@@ -196,7 +270,7 @@
        
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -214,6 +288,7 @@ export default {
   data() {
     return {
       text: "this is default content",
+      activeIndex:"值班厂长",
       // 遮罩层
       loading: true,
       // 选中数组
@@ -223,7 +298,7 @@ export default {
       // 非多个禁用
       multiple: true,
       // 显示搜索条件
-      showSearch: true,
+      showSearch: false,
       // 总条数
       total: 0,
       // 工作日志表格数据
@@ -263,6 +338,7 @@ export default {
     };
   },
   created() {
+    this.queryParams.post="值班厂长";
     this.getList();
     this.getDicts("lgdept").then(response => {
       this.deptOptions = response.data;
@@ -272,6 +348,12 @@ export default {
     });
   },
   methods: {
+
+    handleSelect(key, keyPath) {
+        console.log(key);
+        this.queryParams.post=key;
+        this.getList();
+      },
     change(val) {
       //console.log(val)
       this.text=val;
@@ -290,6 +372,7 @@ export default {
        getPostInfo(val).then(response => {   
         this.postOptions=response.noteCfg;
       });    
+      this.handleQuery();
       },
     // 单位字典翻译
     deptFormat(row, column) {

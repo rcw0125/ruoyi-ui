@@ -2,17 +2,17 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="选择单位" prop="dept">
-        <el-select v-model="queryParams.leaderdept" placeholder="请输入单位">
+        <el-select v-model="queryParams.dept" @change="handleQuery" placeholder="请输入单位">
                 <el-option
-                  v-for="item in deptOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="dict in deptOptions"
+                  :key="dict.value"
+                  :label="dict.dictLabel"
+                  :value="dict.dictLabel"
                 > </el-option> 
               </el-select> 
       </el-form-item>
       <el-form-item label="岗位" prop="code">
-         <el-select v-model="queryParams.code" placeholder="请选择岗位"  clearable size="small">
+         <el-select v-model="queryParams.code" placeholder="请选择岗位"  @change="handleQuery" clearable size="small">
           <el-option
             v-for="dict in postOptions"
             :key="dict.postCode"
@@ -125,10 +125,10 @@
       <el-form-item label="单位" prop="dept">
         <el-select v-model="form.dept" placeholder="请选择单位">
                 <el-option
-                  v-for="item in deptOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="dict in deptOptions"
+                  :key="dict.value"
+                  :label="dict.dictLabel"
+                  :value="dict.dictLabel"
                 > </el-option> 
               </el-select> 
       </el-form-item>
@@ -193,43 +193,7 @@ export default {
       //岗位选择框
       postOptions: [],
       
-       deptOptions: [{
-           value: '冶炼车间',
-          label: '冶炼车间'
-        }, {
-             value: '精炼车间',
-          label: '精炼车间'
-        }, {
-             value: '连铸车间',
-          label: '连铸车间'
-        }, {
-             value: '脱硫车间',
-          label: '脱硫车间'
-        }, {
-             value: '冶炼维修车间',
-          label: '冶炼维修车间'
-        }, {
-             value: '连铸维修车间',
-          label: '连铸维修车间'
-        }, {
-             value: '运行车间',
-          label: '运行车间'
-        }, {
-          value: '生产科',
-          label: '生产科'
-        }, {
-          value: '安全科',
-          label: '安全科'
-        }, {
-          value: '精益生产办公室',
-          label: '精益生产办公室'
-        }, {
-          value: '质量技术科',
-          label: '质量技术科'
-        }, {
-          value: '设备科',
-          label: '设备科'
-        }],
+      deptOptions: [],
 
       baibanOptions:  [{
           value: '否',
@@ -258,6 +222,9 @@ export default {
   created() {
     this.getPost();
     this.getList();
+    this.getDicts("lgdept").then(response => {
+      this.deptOptions = response.data;
+    });
   },
   methods: {
     /** 查询工作日志模板列表 */

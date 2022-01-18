@@ -43,6 +43,14 @@ export function delQuyu(id) {
   })
 }
 
+// 查询设备区域下拉树结构
+export function treeselect() {
+  return request({
+    url: '/system/quyu/treeselect',
+    method: 'get'
+  })
+}
+
 // 导出设备区域
 export function exportQuyu(query) {
   return request({

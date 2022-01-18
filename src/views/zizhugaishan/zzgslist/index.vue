@@ -613,20 +613,14 @@ export default {
       // 科室审核表单参数
       kesform: {},
       shksOptions: [{
-          value: '生产科',
-          label: '生产科'
+          value: '生产技术科',
+          label: '生产技术科'
         }, {
           value: '安全科',
           label: '安全科'
         }, {
-          value: '精益生产办公室',
-          label: '精益生产办公室'
-        }, {
-          value: '质量技术科',
-          label: '质量技术科'
-        }, {
-          value: '设备科',
-          label: '设备科'
+          value: '综合办公室',
+          label: '综合办公室'
         }],
       chejshhOptions:  [{
           value: '车间审核通过',

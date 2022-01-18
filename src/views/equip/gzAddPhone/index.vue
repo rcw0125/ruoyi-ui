@@ -13,7 +13,7 @@
         关闭     
         </el-button>
       </el-form-item>
-      <el-form-item label="设备id" prop="sbid">
+      <el-form-item label="设备id" v-show="false" prop="sbid">
           <el-input v-model="form.sbid" readonly placeholder="请输入设备id" />
         </el-form-item>
         <el-form-item label="设备名称" prop="sbid">
@@ -24,7 +24,9 @@
          <el-form-item label="故障内容" prop="djcontent">
           <el-input v-model="form.djcontent" type="textarea" rows="4"  placeholder="请输入内容" />
         </el-form-item>
-      
+      <el-form-item label="登记人电话" prop="djrphone">
+          <el-input v-model="form.djrphone" placeholder="请输入登记人电话" maxlength="11"  />
+      </el-form-item>
       <el-form-item label="责任车间" prop="djwxdept">
         <el-select v-model="form.djwxdept" placeholder="请选择责任车间" clearable size="small">
           <el-option
@@ -117,9 +119,9 @@
 </template>
 
 <script>
-import { listGuzhang, getGuzhang, delGuzhang, addGuzhang, updateGuzhang, exportGuzhang ,getAddInfo,getAddInfoByPhone} from "@/api/system/guzhang";
+import { listGuzhang, getGuzhang, delGuzhang, addGuzhang, updateGuzhang, exportGuzhang ,getAddInfoByPhone} from "@/api/system/guzhang";
 import { listQuyu } from "@/api/system/quyu";
-import Treeselect from "@riophae/vue-treeselect";
+import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "Guzhang",
@@ -193,6 +195,8 @@ export default {
       },
       //路由参数
       routerId: 0,
+      //故障内容
+       sc:"",
       // 表单参数
       form: {},
       // 表单校验
@@ -283,7 +287,10 @@ export default {
   },
   created() {
     this.routerId = this.$route.params && this.$route.query.sid;
+    this.sc= this.$route.params && this.$route.query.sc;
+    console.log(this.sc);
     this.getPhoneInfo(this.routerId);
+    
     this.queryParams.sbid=this.routerId;
     this.getList();
     // this.getDicts("lgdept").then(response => {
@@ -316,6 +323,7 @@ export default {
       this.loading = true;
       getAddInfoByPhone(sid).then(response => {
         this.form = response.data;
+        this.form.djcontent=this.sc;
         this.loading = false;
       });
     },

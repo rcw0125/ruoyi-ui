@@ -33,10 +33,10 @@
       <el-form-item label="考核单位" prop="leaderdept">
         <el-select v-model="queryParams.leaderdept" @change="handleQuery" placeholder="请输入考核单位">
                 <el-option
-                  v-for="item in deptOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                   v-for="dict in deptOptions"
+                  :key="dict.value"
+                  :label="dict.dictLabel"
+                  :value="dict.dictLabel"
                 > </el-option> 
               </el-select> 
       </el-form-item>
@@ -64,7 +64,16 @@
                 > </el-option> 
               </el-select> 
       </el-form-item>
-
+        <el-form-item label="考核性质">
+          <el-select v-model="queryParams.khxz" @change="handleQuery" placeholder="请选择考核性质">
+            <el-option
+              v-for="dict in khxzOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictLabel"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -309,7 +318,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 50,
         nickname: undefined,
         deptname: undefined,
         khrq: undefined,
@@ -320,43 +329,7 @@ export default {
       // 被考核单位字典
       beikaoheDeptOptions:[],
 
-      deptOptions: [{
-           value: '冶炼车间',
-          label: '冶炼车间'
-        }, {
-             value: '精炼车间',
-          label: '精炼车间'
-        }, {
-             value: '连铸车间',
-          label: '连铸车间'
-        }, {
-             value: '脱硫车间',
-          label: '脱硫车间'
-        }, {
-             value: '冶炼维修车间',
-          label: '冶炼维修车间'
-        }, {
-             value: '连铸维修车间',
-          label: '连铸维修车间'
-        }, {
-             value: '运行车间',
-          label: '运行车间'
-        }, {
-          value: '生产科',
-          label: '生产科'
-        }, {
-          value: '安全科',
-          label: '安全科'
-        }, {
-          value: '精益生产办公室',
-          label: '精益生产办公室'
-        }, {
-          value: '质量技术科',
-          label: '质量技术科'
-        }, {
-          value: '设备科',
-          label: '设备科'
-        }],
+      deptOptions: [],
 
       khtypeOptions: [{
           value: '科室考评',
@@ -391,6 +364,9 @@ export default {
       this.khzlOptions = response.data;
     });
     this.getDept();
+    this.getDicts("lgdept").then(response => {
+      this.deptOptions = response.data;
+    });
   },
   methods: {
     /** 查询考核列表 */

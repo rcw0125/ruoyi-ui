@@ -7,7 +7,7 @@
           <el-input v-model="form.sbid" placeholder="请输入设备id" />
         </el-form-item>
         <el-form-item label="设备名称" prop="sbname">
-          <el-input v-model="form.sbname" placeholder="请输入设备名称" />
+          <el-input v-model="form.sbname" readonly placeholder="请输入设备名称" />
         </el-form-item>
         <el-form-item label="标准id" v-show="false" prop="bzhid">
           <el-input v-model="form.bzhid" placeholder="请输入标准id" />
@@ -17,13 +17,13 @@
           <el-input v-model="form.dept" placeholder="请选择点检单位" />
         </el-form-item>
         <el-form-item label="点检班组"  prop="team">
-          <el-input v-model="form.team"  placeholder="请选择点检班组" />
+          <el-input v-model="form.team"  readonly placeholder="请选择点检班组" />
         </el-form-item>
-        <el-form-item label="点检类别" v-show="false" prop="leibie">
-          <el-input v-model="form.leibie"  placeholder="请选择点检类别" />
+        <el-form-item label="点检类别" prop="leibie">
+          <el-input v-model="form.leibie" readonly placeholder="请选择点检类别" />
         </el-form-item>
         <el-form-item label="点检周期"  prop="zhouqi">
-           <el-input v-model="form.zhouqi"  placeholder="请选择点检周期" />
+           <el-input v-model="form.zhouqi" readonly placeholder="请选择点检周期" />
         </el-form-item>
         <el-form-item label="标准备注" v-show="false" prop="bzhnote">
           <el-input v-model="form.bzhnote" placeholder="请输入标准备注" />
@@ -46,11 +46,11 @@
         </el-form-item> -->
        
        <el-form-item label="提示" prop="note">
-          <el-input v-model="form.note" placeholder="" />
+          <el-input v-model="form.note"  readonly placeholder="" />
         </el-form-item>
 
        <el-form-item label="点检内容">
-          <el-input v-model="form.djcontent" type="textarea" :rows=3 placeholder="请输入内容;异常时必须输入内容" />     
+          <el-input v-model="form.djcontent" type="textarea" :rows=3 placeholder="请输入内容;异常时必须输入内容，至少5字以上" />     
         </el-form-item>
         
         
@@ -77,7 +77,7 @@
          点 检 异 常
         </el-button>
       </el-form-item>
-      <el-form-item label="标准内容" prop="biaozhun">
+      <el-form-item label="点检标准" prop="biaozhun">
           <!-- <el-input v-model="form.biaozhun" type="textarea" placeholder="请输入内容" /> -->
            <EditorReadOnly  v-model="form.biaozhun"  :min-height="192"/>
         </el-form-item>
@@ -194,6 +194,10 @@ export default {
      
       /** 提交按钮 */
     submitzhengchang() {
+      // if(this.form.leibie=="专业点检" && this.form.djcontent.length<15){
+      //   this.$message.error('专业点检内容至少15字以上，请认真填写！');
+      //   return;
+      // }
       this.form.djresult="正常";
       addDianjianlist(this.form).then(response => {
               this.msgSuccess("新增点检记录成功");    
@@ -205,7 +209,13 @@ export default {
     // 返回按钮，返回到欢迎界面
     handleClose() {
       this.$store.dispatch("tagsView/delView", this.$route);
-       this.$router.push({ path: "/index" });
+       this.$router.push({ path: "/equip/mydianjian" });
+    },
+
+    // 点检成功后，跳转到操作成功界面
+    handleResult() {
+      this.$store.dispatch("tagsView/delView", this.$route);
+       this.$router.push({ path: "/djresult?sid="+this.form.sbid+"&sc="+this.form.djcontent });
     },
      /** 提交按钮 */
     submityichang() {
@@ -213,10 +223,14 @@ export default {
           this.$message.error('请填写点检内容！');
         return;
       };
+      if(this.form.djcontent.length<5){
+        this.$message.error('点检异常内容至少5字以上，请认真填写！');
+        return;
+      }
       this.form.djresult="异常";
       addDianjianlist(this.form).then(response => {
               this.msgSuccess("新增点检记录成功");   
-              this.handleClose();    
+              this.handleResult();    
             });
     },
 

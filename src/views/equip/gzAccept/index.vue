@@ -117,7 +117,7 @@
         </el-form-item>
 
          <el-form-item label="故障初步分析" prop="jscontent">
-          <el-input v-model="form.jscontent" type="textarea" rows="3" placeholder="请输入内容" />
+          <el-input v-model="form.jscontent" type="textarea" rows="3" placeholder="请输入内容，字数10字以上" />
         </el-form-item>
         <el-form-item label="故障分类" prop="jsclfl">
           <el-select v-model="form.jsclfl" placeholder="请选择故障分类">
@@ -130,7 +130,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="预计处理时间(天)" prop="jsclsj">
-          <el-input v-model="form.jsclsj" placeholder="请输入预计处理时间(天)" />
+          <!-- <el-input v-model="form.jsclsj"  oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入预计处理时间(天)" /> -->
+           <el-input-number v-model="form.jsclsj" :min="1" :max="30" label="描述文字"></el-input-number>
         </el-form-item>
         <!-- <el-form-item label="接收人" prop="jsr">
           <el-input v-model="form.jsr" placeholder="请输入接收人" />
@@ -350,7 +351,7 @@ export default {
           { required: true, message: "接收人不能为空", trigger: "blur" }
         ],
         jscontent: [
-          { required: true, message: "故障初步分析不能为空", trigger: "blur" }
+          { required: true, message: "故障初步分析请输入内容，字数10字以上", trigger: "blur" }
         ],
         jsclfl: [
           { required: true, message: "故障分类不能为空", trigger: "change" }
@@ -571,6 +572,7 @@ export default {
     submitgzForm() {
       this.$refs["gzform"].validate(valid => {
         if (valid) {
+          
           gzDeptGuzhang(this.gzform).then(response => {
               this.msgSuccess("更正维修车间成功");
               this.gzopen = false;
@@ -584,6 +586,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if(this.form.jscontent.length<10){
+            this.$message.error("故障初步分析字数只有"+this.form.jscontent.length+"个，应至少10个以上！");
+            return;
+          }
            acceptGuzhang(this.form).then(response => {
               this.msgSuccess("接收操作成功");
               this.open = false;

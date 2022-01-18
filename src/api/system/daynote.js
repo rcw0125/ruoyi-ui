@@ -25,6 +25,15 @@ export function getCfg() {
   })
 }
 
+
+// 查询工作日志配置模板
+export function getLastCfg() {
+  return request({
+    url: '/system/daynote/getLastCfg',
+    method: 'get'
+  })
+}
+
 // 查询自己可修改的工作日志
 export function samePostList() {
   return request({

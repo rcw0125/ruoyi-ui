@@ -34,10 +34,28 @@ export function listReplyBzhjc(query) {
   })
 }
 
+// 查询标准化检查列表---整改回复
+export function listReplyPmdl(query) {
+  return request({
+    url: '/system/bzhjc/getPmdlReplyList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询标准化检查列表---验证
 export function listConfirmBzhjc(query) {
   return request({
     url: '/system/bzhjc/getConfirmList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询标准化检查列表---验证
+export function listConfirmPmdl(query) {
+  return request({
+    url: '/system/bzhjc/getPmdlConfirmList',
     method: 'get',
     params: query
   })

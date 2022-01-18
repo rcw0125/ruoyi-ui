@@ -44,6 +44,15 @@
               />
             </el-form-item>
           </el-col>
+          <el-row :gutter="20">
+      <el-col :sm="24" :lg="24">
+        <blockquote class="text-warning" style="font-size: 14px">
+          <h4 class="text-danger">
+            选择整个表格，右键，1、将表格属性中的border width 设为1 2、将单元格-单元格属性-高级 里的边框颜色改为黑色
+          </h4>
+        </blockquote>
+      </el-col>
+    </el-row>
           <tinymce 
           @change="change"
           :defaultContent="form.note"
@@ -59,6 +68,7 @@
           </el-col> -->
         </el-row>
         <!-- <div  v-html="text" /> -->
+        
       </el-form>
       
    

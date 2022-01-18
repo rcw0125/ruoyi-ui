@@ -33,10 +33,30 @@
 
      
     </el-row>
+
+
+   
+     <!-- <el-row > 
+       <div style="background:#F56C6C;color: #fff;font-size: 16px">
+          <h4 >
+           标准化检查规范:
+            <br />  
+           1、自己检查未被整改的单据，不允许超过10项（车间人员5项）
+           <br /> 
+           2、未验证的单据，不允许超过2项
+          <br /> 
+            3、需要本单位整改的单据总数，不允许超过10项（科室2项）。
+          <br /> 
+           不满足条件的，不允许新增。
+         </h4>
+       </div>
+     
+    </el-row> -->
     <el-divider />
+   
     <el-row :gutter="20">
       
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+      <el-col :xs="24" :sm="24" :md="16" :lg="16">
         <el-card class="update-log">
           <div slot="header" class="clearfix">
             <span>更新日志</span>
@@ -46,7 +66,14 @@
             
             
            
-        
+        <el-collapse-item   title="标准化检查规范: - 2021-11-28">
+              <ol>
+                <li>自己检查未被整改的单据，不允许超过20项（车间人员10项）</li>
+                <li>未验证的单据，不允许超过2项</li> 
+                <li>需要本单位整改的单据总数，不允许超过15项（科室5项）。</li> 
+                <li>不满足条件的，不允许新增。</li> 
+              </ol>
+            </el-collapse-item>
 
         
           <el-collapse-item title="v3.7.0 - 2021-09-13">
@@ -76,8 +103,9 @@
 </template>
 
 <script>
-import jsQR from "jsqr";
-import Jimp from "jimp";
+// 测试二维码这个组件，旧浏览器不支持
+// import jsQR from "jsqr";
+// import Jimp from "jimp";
 export default {
   name: "index",
   data() {

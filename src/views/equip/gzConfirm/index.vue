@@ -150,17 +150,17 @@
         <el-form-item label="故障处理过程" prop="clcontent">
           <el-input v-model="form.clcontent" readonly type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="故障小类" prop="clgzfenlei">
+        <!-- <el-form-item label="故障小类" prop="clgzfenlei">
           <el-input v-model="form.clgzfenlei" readonly placeholder="请选择故障小类" />
-          <!-- <el-select v-model="form.clgzfenlei" placeholder="请选择故障小类">
+          <el-select v-model="form.clgzfenlei" placeholder="请选择故障小类">
             <el-option
               v-for="dict in gzxlOptions"
               :key="dict.dictValue"
               :label="dict.dictLabel"
               :value="dict.dictLabel"
             ></el-option>
-          </el-select> -->
-        </el-form-item>
+          </el-select>
+        </el-form-item> -->
          <!-- <el-form-item label="验证人" prop="yzr">
           <el-input v-model="form.yzr" placeholder="请输入验证人" />
         </el-form-item> -->
@@ -176,7 +176,7 @@
         </el-form-item>
         
         <el-form-item label="验证内容" prop="yzcontent">
-          <el-input v-model="form.yzcontent" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.yzcontent" type="textarea" placeholder="请输入内容，5字以上" />
         </el-form-item>
         <!-- <el-form-item label="处理时刻" prop="clsk">
           <el-input v-model="form.clsk" placeholder="请输入处理时刻" />
@@ -487,6 +487,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+            if(this.form.yzcontent.length<5){
+            this.$message.error("验证内容字数太少，只有"+this.form.yzcontent.length+"个，至少5字以上");
+            return;
+          }
            confirmGuzhang(this.form).then(response => {
               this.msgSuccess("验证操作成功");
               this.open = false;

@@ -524,7 +524,9 @@ export default {
     /** 查询部门下拉树结构 */
     getTreeselect() {
       treeselect().then(response => {
+        console.log(response);
         this.deptOptions = response.data;
+        
       });
     },
     // 筛选节点

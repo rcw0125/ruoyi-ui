@@ -9,10 +9,57 @@ export function listEquipbiaozhun(query) {
   })
 }
 
+
+// 查询点检标准列表--月明细
+export function listYueMingXi(query) {
+  return request({
+    url: '/system/equipbiaozhun/YueMingXiList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询点检标准列表--月班组点检率
+export function listTeamRate(query) {
+  return request({
+    url: '/system/equipbiaozhun/YueTeamList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询点检标准列表--月车间点检率
+export function listDeptRate(query) {
+  return request({
+    url: '/system/equipbiaozhun/YueDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+// 根据部门查询岗位列表
+export function getPostinfo(query) {
+  return request({
+    url: '/system/equipbiaozhun/getPostInfo?dept='+query,
+    method: 'get',
+  })
+}
+
 // 查询我的车间、班组的点检标准列表
 export function listMyEquipbiaozhun(query) {
   return request({
     url: '/system/equipbiaozhun/myList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询我的车间、班组的点检标准列表，判断是否可以点检
+export function listMydianjian(query) {
+  return request({
+    url: '/system/equipbiaozhun/myDianJianList',
     method: 'get',
     params: query
   })

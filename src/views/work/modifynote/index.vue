@@ -1,6 +1,16 @@
 <template>
   <div class="app-container">
-  
+  <el-row :gutter="20">
+      <el-col :sm="24" :lg="24">
+          <h4 class="text-danger">
+           1、日志个数出现异常时，可以通过删除按钮进行删除
+           <br>
+           2、确认交班操作，应该由当前班下班前操作。
+          </h4>
+
+               
+      </el-col>
+    </el-row>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -18,7 +28,7 @@
         <el-button
           type="danger"
           plain
-          icon="el-icon-delete"
+          icon="el-icon-download"
           size="mini"
           :disabled="single"
           @click="handleDelete"
@@ -33,6 +43,21 @@
           size="mini"
           @click="handleQuery"
         >刷新</el-button>
+
+        
+      </el-col>
+       <el-col :span="1.5">
+
+           
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDeleteNote"
+         
+        >确认删除交接班日志</el-button>
       </el-col>
    
 
@@ -40,14 +65,19 @@
 
     <el-table v-loading="loading" :data="daynoteList" @row-dblclick="dbSelected" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="日期" align="center" prop="logtime" width="180"/>
+      <el-table-column label="编号" align="center" prop="id" width="70"/>
+      <el-table-column label="日期" align="center" prop="logtime" />
       <!-- <el-table-column label="岗位" align="center" prop="post" /> -->
       <el-table-column label="记录人" align="center" prop="name" />
       <el-table-column label="班组" align="center" prop="team" />
-      <el-table-column label="状态" align="center" prop="status" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
-        <!-- <template slot-scope="scope">
+      <!-- <el-table-column label="状态" align="center" prop="status" /> -->
+      <el-table-column label="创建时间" align="center" prop="createTime" >
+      <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, ' {h}:{i}:{s}') }}</span>
+        </template> 
+        </el-table-column>
+      <!-- </el-table-column>
+        <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {H}-{M}-{s}') }}</span>
         </template> -->
       <!-- </el-table-column>
@@ -65,14 +95,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
+            type="success"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
            
-          >修改</el-button>
+          >修改交接班 </el-button>
           <el-button
             size="mini"
-            type="text"
+            type="danger"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
          
@@ -93,7 +123,7 @@
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
        <el-row>
-         <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8">
+         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
             <el-form-item label="日期" prop="logtime">
                <el-date-picker
                    v-model="form.logtime"
@@ -103,8 +133,15 @@
               </el-date-picker>       
             </el-form-item>
           </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+            <el-button type="primary" @click="submitForm">确 认 修 改</el-button>
+          </el-col>
+         
 
-         <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8">
+       </el-row>
+
+       <el-row>
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
              <el-form-item label="班组">
               <el-select v-model="form.team" placeholder="选择班组">
                 <el-option
@@ -116,11 +153,11 @@
               </el-select>
             </el-form-item>
           </el-col>
-
-          <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8">
-            <el-button type="primary" @click="submitForm">确 认 修 改</el-button>
+           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+             <el-form-item label="记录人" prop="name">
+                  <el-input    v-model="form.name" placeholder="记录人" />
+               </el-form-item>
           </el-col>
-
        </el-row>
           
 
@@ -214,6 +251,15 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        logtime: [
+          { required: true, message: "日期不能为空", trigger: "blur" }
+        ],
+        name: [
+          { required: true, message: "记录人不能为空", trigger: "blur" }
+        ],
+        team: [
+          { required: true, message: "班组不能为空", trigger: "change" }
+        ],
       }
     };
   },
@@ -336,6 +382,22 @@ export default {
         }
       });
     },
+
+     /** 删除按钮操作 */
+    handleDeleteNote(row) {
+      const ids = row.id || this.ids;
+      this.$confirm('是否确认删除工作日志编号为"' + ids + '"的数据项?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          return delDaynote(ids);
+        }).then(() => {
+          this.getList();
+          this.msgSuccess("删除成功");
+        })
+    },
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;

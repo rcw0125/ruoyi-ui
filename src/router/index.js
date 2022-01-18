@@ -152,6 +152,20 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/mydianjian',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: (resolve) => require(['@/views/equip/mydianjian'], resolve),
+        name: 'mydianjian',
+        meta: { title: '点检我的设备', activeMenu: '/equip/mydianjian'}
+      }
+    ]
+      
+  },
+  {
     path: '/jixiao',
     component: (resolve) => require(['@/views/baidan/jixiao'], resolve),
     hidden: true,
@@ -169,6 +183,39 @@ export const constantRoutes = [
     hidden: true,
       
   },
+  {
+    path: '/dianjian',
+    component: (resolve) => require(['@/views/equip/dianjian'], resolve),
+    hidden: true,
+      
+  },
+ 
+  {
+    path: '/guzhang',
+    component: (resolve) => require(['@/views/equip/gzAddPhone'], resolve),
+    hidden: true,
+      
+  },
+  {
+    path: '/djresult',
+    component: (resolve) => require(['@/views/equip/djresult'], resolve),
+    hidden: true,
+      
+  },
+  {
+    path: '/GzPhone',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: (resolve) => require(['@/views/equip/gzAddPhone'], resolve),
+        name: 'gzAddPhone',
+        meta: { title: '设备故障', icon: 'user' }
+      }
+    ]
+  },
+  
   {
     path: '/daynotecfg',
     component: Layout,

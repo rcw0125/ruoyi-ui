@@ -9,6 +9,15 @@ export function listDaynotecfg(query) {
   })
 }
 
+// 查询工作日志模板列表
+export function listMyDaynotecfg(query) {
+  return request({
+    url: '/system/daynotecfg/myList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询岗位，填充下拉框
 export function getPostInfo() {
   return request({

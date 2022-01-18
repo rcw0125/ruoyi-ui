@@ -395,7 +395,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 50,
         checkperson: null,
         checkdept: null,
         checkdate: null,
@@ -429,20 +429,14 @@ export default {
              value: '运行车间',
           label: '运行车间'
         }, {
-          value: '生产科',
-          label: '生产科'
+          value: '生产技术科',
+          label: '生产技术科'
         }, {
           value: '安全科',
           label: '安全科'
         }, {
-          value: '精益生产办公室',
-          label: '精益生产办公室'
-        }, {
-          value: '质量技术科',
-          label: '质量技术科'
-        }, {
-          value: '设备科',
-          label: '设备科'
+          value: '综合办公室',
+          label: '综合办公室'
         }],
        statusOptions: [{
           value: '等待处理',

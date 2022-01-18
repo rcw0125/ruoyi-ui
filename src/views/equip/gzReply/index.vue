@@ -87,7 +87,7 @@
 
     <!-- 添加或修改故障报修对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
        
         <el-form-item label="设备名称" prop="sbid">
           <el-input v-model="form.sbname" readonly placeholder="请输入设备名称" />
@@ -120,7 +120,7 @@
           <el-input v-model="form.jscontent" type="textarea" rows="3" readonly placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="故障大类" prop="jsclfl">
-          <el-select v-model="form.jsclfl"  @change="changefl"  placeholder="请选择故障分类">
+          <el-select v-model="form.jsclfl"   placeholder="请选择故障分类">
             <el-option
               v-for="dict in jsclflOptions"
               :key="dict.dictValue"
@@ -130,9 +130,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预计处理时间(天)" prop="jsclsj">
+        <!-- <el-form-item label="预计处理时间(天)" prop="jsclsj">
           <el-input v-model="form.jsclsj" readonly placeholder="请输入预计处理时间(天)" />
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="接收人" prop="jsr">
           <el-input v-model="form.jsr" placeholder="请输入接收人" />
         </el-form-item>
@@ -147,10 +147,10 @@
           <el-input v-model="form.clr" placeholder="请输入处理人" />
         </el-form-item> -->
         <el-form-item label="故障处理过程" prop="clcontent">
-          <el-input v-model="form.clcontent" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.clcontent" type="textarea" minlength="20" rows="4" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="故障小类" prop="clgzfenlei">
-          <!-- <el-input v-model="form.clgzfenlei" placeholder="请输入故障分类" /> -->
+        <!-- <el-form-item label="故障小类" prop="clgzfenlei">
+         
           <el-select v-model="form.clgzfenlei" placeholder="请选择故障小类">
             <el-option
               v-for="dict in gzxlOptions"
@@ -159,7 +159,7 @@
               :value="dict.dictLabel"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="处理时刻" prop="clsk">
           <el-input v-model="form.clsk" placeholder="请输入处理时刻" />
         </el-form-item>
@@ -489,7 +489,7 @@ export default {
       const id = row.id || this.ids
       getGuzhang(id).then(response => {
         this.form = response.data;
-        changefl(this.form.clgzfenlei);
+        // this.changefl(this.form.clgzfenlei);
         this.open = true;
         this.title = "处理故障报修";
       });
@@ -501,6 +501,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if(this.form.clcontent.length<15){
+            this.$message.error("处理过程字数太少，只有"+this.form.clcontent.length+"个，至少15字以上");
+            return;
+          }
            replyGuzhang(this.form).then(response => {
               this.msgSuccess("处理操作成功");
               this.open = false;

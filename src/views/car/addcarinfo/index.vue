@@ -31,12 +31,12 @@
        <el-row>
        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
           <el-form-item label="车型" prop="cartype">
-          <el-input v-model="form.cartype"   disabled placeholder="请输入车号" />
+          <el-input v-model="form.cartype"   readonly placeholder="请输入车号" />
         </el-form-item>
        </el-col>
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
            <el-form-item label="收费方式" prop="shoufeifangshi">
-          <el-input v-model="form.shoufeifangshi" disabled placeholder="请输入收费方式" />
+          <el-input v-model="form.shoufeifangshi" readonly placeholder="请输入收费方式" />
         </el-form-item>
        </el-col>
        </el-row>
@@ -46,12 +46,12 @@
        
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
             <el-form-item label="单价" prop="danjia">
-          <el-input v-model="form.danjia" disabled placeholder="请输入单价" />
+          <el-input v-model="form.danjia" readonly placeholder="请输入单价" />
         </el-form-item>
        </el-col>
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
            <el-form-item label="收费说明" prop="beizhu">
-          <el-input v-model="form.beizhu" disabled placeholder="请输入收费说明" />
+          <el-input v-model="form.beizhu" readonly placeholder="请输入收费说明" />
         </el-form-item>
        </el-col>
        </el-row>

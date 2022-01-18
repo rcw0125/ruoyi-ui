@@ -673,7 +673,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 50,
         checkperson: null,
         checkdept: null,
         checkdate: null,
@@ -738,10 +738,10 @@ export default {
     this.getDicts("bzhjcshx").then((response) => {
       this.checkpropOptions = response.data;
     });
-    this.getDicts("bzhjcdept").then((response) => {
+    this.getDicts("lgdept").then((response) => {
       this.moddeptidOptions = response.data;
     });
-    this.getDicts("bzhjcdept").then((response) => {
+    this.getDicts("lgdept").then((response) => {
       this.moddeptOptions = response.data;
     });
   },
