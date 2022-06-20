@@ -31,12 +31,23 @@
         </div>
       </el-col> -->
       <!--用户数据-->
+       <el-col :span="6" :offset="18">
+        <el-button
+          type="primary"
+          plain
+          v-show="mystatus"
+          icon="el-icon-plus"
+          size="mini"
+          @click="selectNotMyEquip"
+        >添加我的设备</el-button>
+      </el-col>
       <el-col :span="24" :xs="24">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="0">班组未点检设备</el-menu-item>
+           <el-menu-item index="3">我的点检</el-menu-item>
+      <el-menu-item index="0">班组未点检</el-menu-item>
   
-     <el-menu-item index="1" >班组已点检设备</el-menu-item>
-     <el-menu-item index="2">车间设备点检情况</el-menu-item>
+     <el-menu-item index="1" >班组已点检</el-menu-item>
+     <el-menu-item index="2">车间点检情况</el-menu-item>
      <div class="line"></div>
     </el-menu>
          <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
@@ -117,7 +128,7 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
+    
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -167,7 +178,7 @@
 
     <el-table v-loading="loading" :data="equipbiaozhunList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <!-- <el-table-column label="ID" align="center" prop="id" /> -->
+       <el-table-column label="ID" align="center" prop="id" v-if="false" />
       <!-- <el-table-column label="设备ID" align="center" prop="sbid" /> -->
       <el-table-column label="设备名称" align="center"   prop="sbname" width="180">
        <template slot-scope="scope">
@@ -192,13 +203,21 @@
       <el-table-column label="最近点检" align="center" prop="lasttime"  width="180" />
      
      
-      <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+      <el-table-column label="操作" align="center" v-if="mystatus" class-name="small-padding fixed-width">
+        <!-- <template slot-scope="scope">
            <router-link :to="'/equip/dianjian?sid=' + scope.row.sbid" class="link-type">
             <el-tag :type="scope.row.flag == '1' ? 'success' : 'danger'">{{scope.row.remark}}</el-tag>
           </router-link>
+        </template> -->
+         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-circle-close"
+            @click="cancelAuthUser(scope.row)"
+          >从我的设备删除</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     
     <pagination
@@ -211,82 +230,56 @@
       </el-col>
     </el-row>  
 
-   
-
-    <!-- 添加或修改点检标准对话框 -->
+    
+    <!-- 添加或修改参数配置对话框 -->
+    <!--      
+     当一个 form 元素中只有一个输入框时，每次鼠标点击输入框后，不管是否输入数据，按下回车键后都跳转到首页。
+     原因是在该输入框中按下回车键默认自动提交该表单。如果希望阻止这一默认行为，可以在标签上添加 @submit.native.prevent。20200826 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        
-        <!-- <el-form-item label="设备id" v-show="false" prop="sbid">
-          <el-input v-model="form.sbid" placeholder="请输入设备id" />
-        </el-form-item> -->
-        <el-form-item label="设备名称" prop="sbname">
-          <el-input v-model="form.sbname" readonly placeholder="请输入设备名称" />
-        </el-form-item>
-        <!-- <el-form-item label="设备名称" prop="sbid">
-          <treeselect v-model="form.sbid" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择设备名称" />
-        </el-form-item> -->
-       
-        <el-form-item label="点检路线" prop="name">
-          <el-input v-model="form.name" placeholder="请输入点检路线" />
-        </el-form-item>
-        <el-form-item label="点检标准">
-          <editor v-model="form.biaozhun" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="点检单位" v-show="routerId==1"  prop="dept">
-          <el-select v-model="form.dept" @change="getPost" placeholder="请选择点检单位">
-            <el-option
-              v-for="dict in deptOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="点检班组"  prop="team">
-          <el-select v-model="form.team" placeholder="请选择点检班组">
-            <el-option
-              v-for="dict in teamOptions"
-              :key="dict.postName"
-              :label="dict.postName"
-              :value="dict.postName"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="点检类别" prop="leibie">
-          <el-select v-model="form.leibie" placeholder="请选择点检类别">
-            <el-option
-              v-for="dict in leibieOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="点检周期" prop="zhouqi">
-          <el-select v-model="form.zhouqi" placeholder="请选择点检周期">
-            <el-option
-              v-for="dict in zhouqiOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictLabel"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="备注" prop="note">
-          <el-input v-model="form.note" type="textarea"  :rows="3" placeholder="请输入备注" />
-        </el-form-item> -->
-      </el-form>
+ 
+      <el-row :gutter="20">
+    
+      <!--用户数据-->
+
+      <el-col :span="22" :xs="24">
+        <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px" @submit.native.prevent>
+              
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>       
+          </el-form-item>
+        </el-form> -->
+        <el-table v-loading="loading" :data="notequipbiaozhunList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="ID" align="center" width="50" prop="id" />
+          <el-table-column label="设备名称" align="center"   prop="sbname" width="180"/>
+          <el-table-column label="点检路线" align="center" prop="name" />
+          <el-table-column label="点检班组" align="center" prop="team"  />
+          <el-table-column label="点检类别" align="center" prop="leibie" />
+          <el-table-column label="点检周期" align="center" prop="zhouqi"  />
+        </el-table>
+        <pagination
+          v-show="nottotal>0"
+          :total="nottotal"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+      </el-col>
+    </el-row>     
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" :disabled="multiple"  @click="submitDialog">添加到我的设备列表</el-button>
+        <el-button @click="cancel">关  闭</el-button>
       </div>
     </el-dialog>
+
+
+
+   
   </div>
 </template>
 
 <script>
-import { listEquipbiaozhun,listMyEquipbiaozhun, getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun,getPostinfo,listMydianjian } from "@/api/system/equipbiaozhun";
+import { listEquipbiaozhun,delMyDianJian, addMyDianJian,notMyDianJianList,getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun,getPostinfo,listMydianjian } from "@/api/system/equipbiaozhun";
 import { listQuyu } from "@/api/system/quyu";
 import { treeselect } from "@/api/system/quyu";
 import Treeselect from "@riophae/vue-treeselect";
@@ -299,13 +292,14 @@ export default {
   data() {
     return {
 
-       activeIndex: '0',
+       activeIndex: '3',
       // 遮罩层
       loading: true,
       defaultProps: {
         children: "children",
         label: "name"
       },
+      mystatus:true,
      // 已选择设备名称
       sbname: "",
       sbid: undefined,
@@ -327,8 +321,14 @@ export default {
       showSearch: false,
       // 总条数
       total: 0,
+
+      // 不是--总条数
+      nottotal: 0,
       // 点检标准表格数据
       equipbiaozhunList: [],
+
+       // 不是我的点检标准表格数据
+      notequipbiaozhunList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -400,6 +400,7 @@ export default {
     //使用query，而不是param（router配置里的使用）
     //this.routerId = this.$route.params && this.$route.query.id;
     //console.log(this.routerId);
+    this.queryParams.flag=3;
     this.getList();
     // this.getDicts("lgdept").then(response => {
     //   this.deptOptions = response.data;
@@ -422,9 +423,15 @@ export default {
   methods: {
 
      handleSelect(key, keyPath) {
-       // console.log(key);
+        //console.log(key);
         this.queryParams.flag=key;
         this.getList();
+        if(key==3){
+          this.mystatus=true;
+        }else{
+          this.mystatus=false;
+        }
+
       },
 
         // 筛选节点
@@ -463,6 +470,34 @@ export default {
       }
       
       
+    },
+
+     /** 取消授权按钮操作 */
+    cancelAuthUser(row) {
+      
+      this.$confirm('确认要将此设备"' + row.sbname + '"移除吗？', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        return delMyDianJian(row.id);
+      }).then(() => {
+        this.getList();
+        this.msgSuccess("删除此设备成功");
+      }).catch(() => {});
+    },
+
+    selectNotMyEquip() {
+     // this.reset();
+      //this.handleQuery();
+      
+      notMyDianJianList(this.queryParams).then(response => {
+        this.notequipbiaozhunList = response.rows;
+        this.nottotal = response.total;
+        this.loading = false;
+          });
+      //this.getList();   
+      this.open = true;
     },
 
     getPost(val){
@@ -577,18 +612,19 @@ export default {
         }
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
+    /** 添加设备到我的设备 */
+    submitDialog(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除点检标准编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认添加编号为"' + ids + '"的数据项到我的设备?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delEquipbiaozhun(ids);
+          return addMyDianJian(ids);
         }).then(() => {
+          this.open=false;
           this.getList();
-          this.msgSuccess("删除成功");
+          this.msgSuccess("添加到我的设备成功");
         }).catch(() => {});
     },
     /** 导出按钮操作 */

@@ -34,7 +34,24 @@
       <el-col :span="24" :xs="24">
        
          <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
-      <el-form-item label="设备ID" v-show="false" prop="sbid">
+            <el-col :sm="24" :lg="24">
+        <blockquote class="text-warning" style="font-size: 14px">
+          
+          <h4 class="text-danger">
+            注意：按周查询时，选择日期应为周一至周日
+          </h4>
+        </blockquote>
+        <!-- <hr /> -->
+      </el-col>
+    
+        <el-form-item label="" >
+        <el-radio-group v-model="radio">
+    <el-radio :label="0">按月</el-radio>
+    <el-radio :label="1">按周</el-radio>
+   
+  </el-radio-group>
+      </el-form-item> 
+      <!-- <el-form-item label="设备ID" v-show="false" prop="sbid">
         <el-input
           v-model="queryParams.sbid"
           placeholder="请输入设备ID"
@@ -55,7 +72,7 @@
      
         <el-form-item label="设备名称" v-show="false" prop="parentId" >
           <treeselect v-model="queryParams.sbid"  width="400px" :options="quyuOptions" :normalizer="normalizer" placeholder="请选择设备名称" />
-        </el-form-item>
+        </el-form-item> -->
          
       
       <!-- <el-form-item label="点检路线" prop="name">
@@ -98,7 +115,7 @@
         </el-select>
       </el-form-item> -->
     
-      <el-form-item label="选择月份" prop="note"> 
+      <el-form-item label="选择月份" v-show="radio==0" prop="note"> 
         <el-date-picker
             v-model="queryParams.note"
             type="month"
@@ -106,11 +123,26 @@
             placeholder="选择月">
         </el-date-picker>
       </el-form-item>
+
+       <el-form-item label="选择日期"  v-show="radio==1" >
+         <el-date-picker
+              v-model="dateRange"
+              size="small"
+              style="width: 240px"
+              value-format="yyyy-MM-dd"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+    
      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
      <el-menu-item index="0">设备点检次数明细</el-menu-item>
      <el-menu-item index="1" >班组设备点检率</el-menu-item>
@@ -251,7 +283,7 @@
 </template>
 
 <script>
-import { listEquipbiaozhun,listMyEquipbiaozhun,listTeamRate,listDeptRate, getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun,getPostinfo,listMydianjian,listYueMingXi } from "@/api/system/equipbiaozhun";
+import { listEquipbiaozhun,listMyEquipbiaozhun,listTeamRate,listDeptRate, getEquipbiaozhun, delEquipbiaozhun, addEquipbiaozhun, updateEquipbiaozhun, exportEquipbiaozhun,getPostinfo,listMydianjian,listYueMingXi,listZhouTeamRate,listZhouDeptRate,listZhouMingXi } from "@/api/system/equipbiaozhun";
 import { listQuyu } from "@/api/system/quyu";
 import { treeselect } from "@/api/system/quyu";
 import Treeselect from "@riophae/vue-treeselect";
@@ -264,10 +296,14 @@ export default {
   data() {
     return {
 
+      radio:0,
+
        activeIndex: '0',
        tbvisible:true,
         teamvisible:true,
-
+     
+      // 日期范围
+      dateRange: [],
       // 遮罩层
       loading: true,
       defaultProps: {
@@ -327,6 +363,7 @@ export default {
         flag:0,
         note: null
       },
+      flag:0,
       // 表单参数
       form: {},
       // 表单校验
@@ -378,10 +415,41 @@ export default {
       //  date = date.toString().padStart(2, "0");
        var defaultDate = `${year}-${month}`;
        this.$set(this.queryParams, "note", defaultDate);
+
+     var curday = new Date();
+      var lastday = new Date(curday.getTime()-1*24*60*60*1000) ;//得到昨天日期
+      //Date.now-24*60*60*1000
+       var year1 = lastday.getFullYear(); //得到年份
+       var month1 = lastday.getMonth(); //得到月份
+       var date1 = lastday.getDate(); //得到日期
+       month1 = month1 + 1;
+       month1 = month1.toString().padStart(2, "0");
+       date1 = date1.toString().padStart(2, "0");
+       var defaultDate1 = `${year1}-${month1}-${date1}`;
+       //this.$set(this.queryParams, "logtime", defaultDate);
+      
+       var lastday7 = new Date(curday.getTime()-7*24*60*60*1000) ;//得到7天前日期
+      //Date.now-24*60*60*1000
+       var year7 = lastday7.getFullYear(); //得到年份
+       var month7 = lastday7.getMonth(); //得到月份
+       var date7 = lastday7.getDate(); //得到日期
+       month7 = month7 + 1;
+       month7 = month7.toString().padStart(2, "0");
+       date7 = date7.toString().padStart(2, "0");
+       var defaultDate7 = `${year7}-${month7}-${date7}`;
+       this.dateRange.push(defaultDate7);
+        this.dateRange.push(defaultDate1);
+
     this.getList();
+    //this.getZhouList();
     this.getDicts("lgdept").then(response => {
       this.deptOptions = response.data;
     });
+    
+
+
+
+    
     // this.getDicts("sys_user_team").then(response => {
     //   this.teamOptions = response.data;
     // });
@@ -402,29 +470,47 @@ export default {
 
      handleSelect(key, keyPath) {
        // console.log(key);
-        this.queryParams.flag=key;
-        
-
+        //this.queryParams.flag=key;
+        this.flag=key;
         if(key==0){
           this.tbvisible=true;
           this.teamvisible=true;
-           this.getList();
+          if(this.radio==0){
+            this.getList();
+          }
+          else{
+            this.getZhouList();
+          }    
         }
         else if(key==1){
           this.tbvisible=false;
           this.teamvisible=true;
-          this.listTeamRate();
-            
+           if(this.radio==0){
+              this.listTeamRate();
+          }
+          else{
+              this.listZhouTeamRate();
+          }
         }
         else if(key==2){
            this.tbvisible=false;
            this.teamvisible=false;
-           this.listDeptRate();
+            if(this.radio==0){
+             this.listDeptRate();
+          }
+          else{
+             this.listZhouDeptRate();
+          }
         }
         else{
           this.tbvisible=true;
           this.teamvisible=true;
-           this.getList();
+            if(this.radio==0){
+            this.getList();
+          }
+          else{
+            this.getZhouList();
+          }  
         }
        
       },
@@ -445,6 +531,8 @@ export default {
      
     },
 
+    
+
     /** 查询点检标准列表 */
     getList() {
       if(this.queryParams.note==""||this.queryParams.note==null){
@@ -459,9 +547,26 @@ export default {
         this.equipbiaozhunList = response.rows;
         this.total = response.total;
         this.loading = false;
-          });
-      
+          });       
     },
+
+    
+    /** 查询点检标准列表 */
+    getZhouList() {
+      if(this.dateRange==null){
+        this.$message.error('日期不能为空，请先选择日期范围！');
+        return;
+      }
+      this.loading = true;
+      //this.queryParams.lasttime='2021-12';
+      // console.log(this.queryParams.note);
+      listZhouMingXi(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        this.equipbiaozhunList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+          });       
+    },
+    
 
       /** 查询点检标准列表 */
     listTeamRate() {
@@ -473,6 +578,40 @@ export default {
       //this.queryParams.lasttime='2021-12';
        console.log(this.queryParams.note);
       listTeamRate(this.queryParams).then(response => {
+        this.equipbiaozhunList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+          });
+      
+    },
+    
+     /** 查询点检标准列表 */
+    listZhouTeamRate() {
+       if(this.dateRange==null){
+        this.$message.error('日期不能为空，请先选择日期范围！');
+        return;
+      }
+      this.loading = true;
+      //this.queryParams.lasttime='2021-12';
+       //console.log(this.queryParams.note);
+      listZhouTeamRate(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        this.equipbiaozhunList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+          });
+      
+    },
+
+          /** 查询点检标准列表 */
+    listZhouDeptRate() {
+       if(this.dateRange==null){
+        this.$message.error('日期不能为空，请先选择日期范围！');
+        return;
+      }
+      this.loading = true;
+      //this.queryParams.lasttime='2021-12';
+     //  console.log(this.queryParams.note);
+      listZhouDeptRate(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.equipbiaozhunList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -548,7 +687,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.getList();
+      this.handleSelect(this.flag,'');
+     // this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {

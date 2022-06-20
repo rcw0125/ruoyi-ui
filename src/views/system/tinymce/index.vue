@@ -1,5 +1,31 @@
 <template>
   <div class="app-container">
+   
+        
+    <div class="continer">    
+     <section class="content-box">
+      <section class="item-box">
+        <itemBox :title="tsccGaugeOptionalSettings.title">
+          <!-- <basicGauge :chartData="headData10"></basicGauge> -->
+          <TsccGaugeChart
+            :chartData="tsccGaugeData"
+            :requiredSettings="tsccGaugeRequiredSettings"
+            :optionalSettings="tsccGaugeOptionalSettings"
+          />
+        </itemBox>
+      </section>
+       <section class="item-box">
+        <itemBox :title="tsccGaugeOptionalSettings1.title">
+          <!-- <basicGauge :chartData="headData10"></basicGauge> -->
+          <TsccGaugeChart
+            :chartData="tsccGaugeData1"
+            :requiredSettings="tsccGaugeRequiredSettings1"
+            :optionalSettings="tsccGaugeOptionalSettings1"
+          />
+        </itemBox>
+      </section>
+     </section>
+    </div>
     <el-form
       class="editor-form"
       :rules="rules"
@@ -49,11 +75,14 @@
 </template>
 
 <script>
+import itemBox from "@/components/itemBox";
+import TsccGaugeChart from "@/components/charts/TsccGaugeChart";
 import Tinymce from "@/components/tinymce";
 import {  addNotice } from "@/api/system/notice";
 // import EditorDialog from './editor-dialog';
 
 export default {
+  
   data() {
     return {
       text: "this is default content",
@@ -63,6 +92,37 @@ export default {
         noticeTitle: "",
         noticeType:1,
       },
+       // 仪表盘
+      tsccGaugeData: 90.5,
+      tsccGaugeRequiredSettings: {
+        name: "点检率"
+      },
+      tsccGaugeOptionalSettings: {
+        title: "维修车间点检率",
+        //fd666d
+        //67e0e3  #E4EF0B
+        //37a2da
+        color: [
+           [0.6, '#FF0000'],
+           [0.9, '#FFFF00'],
+           [1, '#00FF00']
+        ]
+      },
+       tsccGaugeData1: 80.5,
+      tsccGaugeRequiredSettings1: {
+        name: "点检率"
+      },
+      tsccGaugeOptionalSettings1: {
+        title: "运行车间点检率",
+        //fd666d
+        //67e0e3  #E4EF0B
+        //37a2da
+        color: [
+            [0.6, '#FF0000'],
+           [0.9, '#FFFF00'],
+           [1, '#00FF00']
+        ]
+      },
       codeTheme: "github",
       rules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
@@ -71,6 +131,8 @@ export default {
   },
   components: {
     // EditorDialog,
+    itemBox,
+    TsccGaugeChart,
     Tinymce,
   },
   methods: {
@@ -105,4 +167,30 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.continer {
+  background:url(../../../assets/images/banner.png) no-repeat center;
+  background-size: 100% 100%;
+  height: 100%;
+  /* padding-top: 5rem; */
+  padding: 5rem 1rem;
+}
+.head-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20rem;
+}
+.content-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  height: 20rem;
+}
+.item-box {
+  height: 100%;
+  flex: 1;
+  margin-right: 1.5rem;
+  position: relative;
+}
 </style>

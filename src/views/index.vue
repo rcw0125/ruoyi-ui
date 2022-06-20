@@ -18,7 +18,10 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col :sm="24" :lg="12" style="padding-left: 20px">
+      <el-col :sm="24" style="padding-left: 20px">
+         <router-link :to="'/equip/mydianjian'"  v-show="phone" class="link-type">
+            <el-tag :type="'success'">点检我的设备</el-tag>
+          </router-link>
          <!-- <button class="sweep" @click="media()">扫一扫</button>
   
     <textarea
@@ -118,9 +121,12 @@ export default {
       // video: Object,
       // cvsele: Object,
       // canvas: Object,
+      phone:false,
       // 版本号
+      screenWidth: null,
       version: "3.7.0",
     };
+    
   },
   //  mounted() {
   //   this.audio = new Audio("../assets/tone.mp3");
@@ -244,6 +250,38 @@ export default {
     //   }
     // }
   },
+  mounted () {
+
+this.screenWidth = document.body.clientWidth,
+
+window.onresize = () => {
+     return (() => {
+     this.screenWidth = document.body.clientWidth
+    })()
+}
+},
+watch: {
+
+screenWidth: {
+
+handler(val){
+
+if (val < 768)
+{
+  this.phone=true;
+//console.log(val+',屏幕宽度小于768px');
+}
+else {
+  this.phone=false;
+//console.log(val+',屏幕宽度大于768px')
+}
+},
+immediate: true
+
+},
+
+}
+
 };
 </script>
 

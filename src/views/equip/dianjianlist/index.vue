@@ -86,10 +86,20 @@
           />
         </el-select>
       </el-form-item> -->
-      <el-form-item label="点检类别" prop="leibie">
+      <!-- <el-form-item label="点检类别" prop="leibie">
         <el-select v-model="queryParams.leibie" placeholder="请选择点检类别" clearable size="small">
           <el-option
             v-for="dict in leibieOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictLabel"
+          />
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="分级" prop="fenji">
+        <el-select v-model="queryParams.fenji" placeholder="请选择分级" clearable size="small">
+          <el-option
+            v-for="dict in fenjiOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictLabel"
@@ -280,9 +290,10 @@
           <span>{{ parseTime(scope.row.djtime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="点检类别" align="center" prop="leibie"  />
+      <el-table-column label="方式" align="center" prop="laiyuan"  />
+      <!-- <el-table-column label="点检类别" align="center" prop="leibie"  /> -->
       <el-table-column label="点检周期" align="center" prop="zhouqi"  />
-       <el-table-column label="点检班组" align="center" prop="team" width="120" />
+       <!-- <el-table-column label="点检班组" align="center" prop="team" width="120" /> -->
       
       <!-- <el-table-column label="备注" align="center" prop="note" />
       <el-table-column label="是否可以点检" align="center" prop="flag" />
@@ -695,12 +706,36 @@
         <el-form-item label="设备名称" prop="sbname">
           <el-input v-model="form.sbname" placeholder="请输入设备名称" />
         </el-form-item>
-        <el-form-item label="标准id" prop="bzhid">
+        <!-- <el-form-item label="标准id" prop="bzhid">
           <el-input v-model="form.bzhid" placeholder="请输入标准id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="点检内容">
           <el-input v-model="form.djcontent" type="textarea" :rows=3 placeholder="请输入内容" />     
         </el-form-item>
+         <el-form-item label="点检结果" prop="djresult">
+          <el-select v-model="form.djresult" placeholder="请选择点检结果">
+            <el-option
+              v-for="dict in djresultOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+         <el-form-item label="关注参数" v-show="form.yxcs!= null &&form.yxcs!=''" prop="yxcs">
+          <el-input v-model="form.yxcs" type="textarea" readonly rows="3" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="点检等级"  prop="fenji">
+          <el-input v-model="form.fenji"  readonly placeholder="分级" />
+        </el-form-item>
+         <el-form-item label="点检照片" v-show="form.fenji=='S级'||form.fenji=='A级'">
+          <el-image
+            style="width: 300px; height: 300px"
+            :src="form.pic"
+            :preview-src-list="[form.pic]"
+          >
+          </el-image>
+          </el-form-item>
          <el-form-item label="标准内容" prop="biaozhun">
           <!-- <el-input v-model="form.biaozhun" type="textarea" placeholder="请输入内容" /> -->
            <EditorReadOnly  v-model="form.biaozhun"  :min-height="192"/>
@@ -754,16 +789,7 @@
         <el-form-item label="点检人" prop="djr">
           <el-input v-model="form.djr" placeholder="请输入点检人" />
         </el-form-item>
-        <el-form-item label="点检结果" prop="djresult">
-          <el-select v-model="form.djresult" placeholder="请选择点检结果">
-            <el-option
-              v-for="dict in djresultOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+       
         <!-- <el-form-item label="点检内容">
           <editor v-model="form.djcontent" :min-height="192"/>
         </el-form-item> -->
@@ -855,8 +881,11 @@ export default {
       quyuName: undefined,
       // 点检班组字典
       teamOptions: [],
-      // 点检类别字典
+      // // 点检类别字典
       leibieOptions: [],
+       // 分级字典
+      fenjiOptions: [],
+
       // 点检周期字典
       zhouqiOptions: [],
       defaultProps: {
@@ -980,8 +1009,11 @@ export default {
     this.getDicts("sys_user_team").then(response => {
       this.teamOptions = response.data;
     });
-    this.getDicts("dianjianleibie").then(response => {
-      this.leibieOptions = response.data;
+    // this.getDicts("dianjianleibie").then(response => {
+    //   this.leibieOptions = response.data;
+    // });
+     this.getDicts("djdengji").then(response => {
+      this.fenjiOptions = response.data;
     });
     this.getDicts("dianjianzhouqi").then(response => {
       this.zhouqiOptions = response.data;

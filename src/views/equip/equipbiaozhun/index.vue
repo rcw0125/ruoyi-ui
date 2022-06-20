@@ -90,6 +90,16 @@
           />
         </el-select>
       </el-form-item>
+       <el-form-item label="点检等级" prop="fenji">
+        <el-select v-model="queryParams.fenji" placeholder="请选择点检等级" clearable size="small">
+          <el-option
+            v-for="dict in fenjiOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictLabel"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="点检周期" prop="zhouqi">
         <el-select v-model="queryParams.zhouqi" placeholder="请选择点检周期" clearable size="small">
           <el-option
@@ -174,14 +184,17 @@
         </template>
       </el-table-column>
       <el-table-column label="点检路线" align="center" prop="name" />
-      <el-table-column label="点检单位" align="center" prop="dept"  />
+      <el-table-column label="点检单位" align="center" prop="dept"  v-if="routerId==1" />
       <el-table-column label="点检班组" align="center" prop="team"  />
       <el-table-column label="点检类别" align="center" prop="leibie" />
       <el-table-column label="点检周期" align="center" prop="zhouqi"  />
+      <el-table-column label="关注参数" align="center" width="100" :show-overflow-tooltip="true" prop="yxcs" />
+      <el-table-column label="点检等级" align="center" prop="fenji"  />
       <!-- <el-table-column label="周点检次数" align="center" prop="zhoucishu"   /> -->
-      <el-table-column label="最近点检" align="center" prop="lasttime"  width="180" />
+   
+      <!-- <el-table-column label="最近点检" align="center" prop="lasttime"  width="180" v-if="routerId==1" /> -->
          <el-table-column label="顺序" align="center" prop="ordernum" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -190,13 +203,13 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:equipbiaozhun:edit']"
           >修改</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:equipbiaozhun:remove']"
-          >删除</el-button>
+          >删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -273,6 +286,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
+         <el-form-item label="关注参数" prop="yxcs">
+          <el-input v-model="form.yxcs" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="点检等级" prop="fenji">
+          <el-select v-model="form.fenji" placeholder="请选择点检等级">
+            <el-option
+              v-for="dict in fenjiOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictLabel"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="顺序" prop="ordernum">
           <!-- <el-input v-model="form.ordernum" placeholder="请输入顺序" /> -->
            <el-input-number v-model="form.ordernum" controls-position="right" :min="0"  :max="500"/>
@@ -311,6 +337,8 @@ export default {
      // 已选择设备名称
       sbname: "",
       sbid: undefined,
+      yxcs:"",
+      fenji:"",
     // 设备区域名称
       quyuName: undefined,
       
@@ -343,6 +371,8 @@ export default {
       leibieOptions: [],
       // 点检周期字典
       zhouqiOptions: [],
+      // 点检等级字典
+      fenjiOptions: [],
       //路由参数
       routerId: 0,
       // 查询参数
@@ -357,7 +387,9 @@ export default {
         team: null,
         leibie: null,
         zhouqi: null,
-        note: null
+        note: null,
+        yxcs: null,
+        fenji: null
       },
       // 表单参数
       form: {},
@@ -378,11 +410,17 @@ export default {
         team: [
           { required: true, message: "点检班组不能为空", trigger: "change" }
         ],
+        dept: [
+          { required: true, message: "点检单位不能为空", trigger: "change" }
+        ],
         leibie: [
           { required: true, message: "点检类别不能为空", trigger: "change" }
         ],
         zhouqi: [
           { required: true, message: "点检周期不能为空", trigger: "change" }
+        ],
+         fenji: [
+          { required: true, message: "点检等级不能为空", trigger: "change" }
         ],
       }
     };
@@ -414,6 +452,9 @@ export default {
     this.getDicts("dianjianzhouqi").then(response => {
       this.zhouqiOptions = response.data;
     });
+    this.getDicts("djdengji").then(response => {
+      this.fenjiOptions = response.data;
+    });
     this.getTreeselect();
     if(this.routerId!=1){
         this.getPost("0");
@@ -433,7 +474,8 @@ export default {
       this.queryParams.sbid = data.id;
       this.sbname=data.name;
       this.sbid= data.id;
-      
+      this.yxcs=data.yxcs;
+      this.fenji=data.fenji;
       this.handleQuery();
      
     },
@@ -529,6 +571,9 @@ export default {
       this.reset();
       this.form.sbid=this.sbid;
       this.form.sbname=this.sbname;
+      this.form.fenji=this.fenji;
+      this.form.yxcs=this.yxcs;
+      this.form.ordernum=11;
       this.open = true;
       this.title = "添加点检标准";
     },

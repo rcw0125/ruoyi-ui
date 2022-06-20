@@ -42,8 +42,6 @@
     </el-form>
     <!-- echarts图形控件 -->
     <div id="myChart" :style="{width: '95%', height: '600px'}"></div>
-    
-
     <el-table v-loading="loading" :data="zhibiaoList"  @row-dblclick="dbSelected" >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
@@ -187,11 +185,13 @@ export default {
     this.getDicts("lgdept").then(response => {
       this.deptOptions = response.data;
     });
+    //this.drawLinetwo();
     // this.$set(this.queryParams, "dept", "冶炼车间");
     
   },
   mounted(){
     //this.getList();
+     //this.drawLinetwo();
   },
   methods: {
     /** 查询指标记录列表 */
@@ -205,7 +205,7 @@ export default {
            this.total = response.total;
            this.loading = false;
            this.drawLine(response.rows);
-       
+          
        
            });
         }
@@ -272,6 +272,63 @@ export default {
             }]
         });
         myChart.resize();
+       },
+
+   drawLinetwo(){
+        
+        // 基于准备好的dom，初始化echarts实例
+        let myCharttwo = this.$echarts.init(document.getElementById('myCharttwo'))
+        // 绘制图表
+        myCharttwo.setOption({
+       type: 'gauge',
+      axisLine: {
+        lineStyle: {
+          width: 30,
+          color: [
+            [0.3, '#67e0e3'],
+            [0.7, '#37a2da'],
+            [1, '#fd666d']
+          ]
+        }
+      },
+      pointer: {
+        itemStyle: {
+          color: 'auto'
+        }
+      },
+      axisTick: {
+        distance: -30,
+        length: 8,
+        lineStyle: {
+          color: '#fff',
+          width: 2
+        }
+      },
+      splitLine: {
+        distance: -30,
+        length: 30,
+        lineStyle: {
+          color: '#fff',
+          width: 4
+        }
+      },
+      axisLabel: {
+        color: 'auto',
+        distance: 40,
+        fontSize: 20
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value} km/h',
+        color: 'auto'
+      },
+      data: [
+        {
+          value: 70
+        }
+      ]
+    });  
+        myCharttwo.resize();
        },
 
     

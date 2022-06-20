@@ -4,7 +4,7 @@
   active-text-color="#ffd04b" >
 
   <el-submenu index="1">
-    <template slot="title" > <i class="el-icon-location"></i>生产技术科</template>
+    <template slot="title" > <i class="el-icon-location"></i>综合科</template>
     <el-menu-item index="值班厂长">值班厂长</el-menu-item>
     <el-menu-item index="调度">调度</el-menu-item>
   </el-submenu>
@@ -16,12 +16,10 @@
     <el-menu-item index="3#转炉炉长">3#转炉炉长</el-menu-item>
     <el-menu-item index="4#转炉炉长">4#转炉炉长</el-menu-item>
     <el-menu-item index="炉下渣跨">炉下渣跨</el-menu-item>
-    <el-menu-item index="皮带上料">皮带上料</el-menu-item>
-    <el-menu-item index="废钢场">废钢场</el-menu-item>
   </el-submenu>
    
    <el-submenu index="3">
-    <template slot="title"><i class="el-icon-c-scale-to-original"></i>精炼车间</template>
+    <template slot="title"><i class="el-icon-c-scale-to-original"></i>精炼</template>
     <el-menu-item index="1#精炼炉长">1#精炼炉长</el-menu-item>
     <el-menu-item index="2#精炼炉长">2#精炼炉长</el-menu-item>
     <el-menu-item index="3#精炼炉长">3#精炼炉长</el-menu-item>
@@ -39,11 +37,13 @@
     <el-menu-item index="6#连铸机长">6#连铸机长</el-menu-item>
   </el-submenu>
    <el-submenu index="5">
-    <template slot="title"><i class="el-icon-document"></i>脱硫车间</template>
+    <template slot="title"><i class="el-icon-document"></i>炉渣车间</template>
     <el-menu-item index="混铁炉">混铁炉</el-menu-item>
     <el-menu-item index="铁水脱硫">铁水脱硫</el-menu-item>
     <el-menu-item index="合金准备">合金准备</el-menu-item>
     <el-menu-item index="上件">上件</el-menu-item>
+    <el-menu-item index="皮带上料">皮带上料</el-menu-item>
+    <el-menu-item index="废钢场">废钢场</el-menu-item>
   </el-submenu>
    <el-submenu index="6">
     <template slot="title"><i class="el-icon-s-custom"></i>维修车间</template>

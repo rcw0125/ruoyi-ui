@@ -330,7 +330,7 @@
               v-for="dict in leibieOptions"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -340,7 +340,7 @@
               v-for="dict in deptOptions"
               :key="dict.dictValue"
               :label="dict.dictLabel"
-              :value="dict.dictValue"
+              :value="dict.dictLabel"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -385,7 +385,7 @@
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
           <div class="el-upload__tip" slot="tip">
-            
+            选择导入日期:
             <el-date-picker clearable size="small"
               v-model="upload.logtime"
               type="date"
@@ -483,10 +483,12 @@ export default {
     };
   },
   created() {
-      var now = new Date();
-       var year = now.getFullYear(); //得到年份
-       var month = now.getMonth(); //得到月份
-       var date = now.getDate()-1; //得到日期
+      var curday = new Date();
+      var lastday = new Date(curday.getTime()-1*24*60*60*1000) ;//得到昨天日期
+      //Date.now-24*60*60*1000
+       var year = lastday.getFullYear(); //得到年份
+       var month = lastday.getMonth(); //得到月份
+       var date = lastday.getDate(); //得到日期
        month = month + 1;
        month = month.toString().padStart(2, "0");
        date = date.toString().padStart(2, "0");
@@ -496,7 +498,7 @@ export default {
     this.getDicts("jiezhileixing").then(response => {
       this.leibieOptions = response.data;
     });
-    this.getDicts("lgdept").then(response => {
+    this.getDicts("dianliangdept").then(response => {
       this.deptOptions = response.data;
     });
     this.getDicts("datafrom").then(response => {
@@ -509,7 +511,9 @@ export default {
     /** 查询电量明细列表 */
     getList() {
       this.loading = true;
+      this.$forceUpdate();  
       listMingxi(this.queryParams).then(response => {
+        console.log(this.queryParams.logtime);
         this.mingxiList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -517,6 +521,7 @@ export default {
     },
 
     jiSuanDianLiang() {
+      this.queryParams.dept="";
       CalDianLiangDaylist(this.queryParams).then(response => {
         this.msgSuccess("计算完毕");
       });
@@ -531,7 +536,7 @@ export default {
             return;
           }
           const values = data.map(item => Number(item[column.property]));
-          if (!values.every(value => isNaN(value))&&index==5) {
+          if (!values.every(value => isNaN(value))&&index==3) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr);
               if (!isNaN(value)) {
@@ -658,6 +663,7 @@ export default {
     handleImport() {
       this.upload.title = "电量导入";
       this.upload.open = true;
+      this.upload.logtime=this.queryParams.logtime;
     },
     // /** 下载模板操作 */
     // importTemplate() {

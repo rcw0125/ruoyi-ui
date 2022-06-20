@@ -369,6 +369,7 @@
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, exportUser, resetUserPwd, changeUserStatus, importTemplate } from "@/api/system/user";
+import { getPostinfo } from "@/api/system/equipbiaozhun";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -623,17 +624,27 @@ export default {
         this.form.password = this.initPassword;
       });
     },
+
+    getPost(val){
+      //console.log(val);
+      getPostinfo(val).then(response => {
+        this.postOptions=response.posts;
+        //console.log(response.posts);
+      });
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      console.log(row.dept.deptName)
       this.reset();
       this.getTreeselect();
       const userId = row.userId || this.ids;
       getUser(userId).then(response => {
         this.form = response.data;
-        this.postOptions = response.posts;
+        //this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.form.postIds = response.postIds;
         this.form.roleIds = response.roleIds;
+        this.getPost(row.dept.deptName);
         this.open = true;
         this.title = "修改用户";
         this.form.password = "";

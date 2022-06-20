@@ -279,14 +279,14 @@
     <!-- 添加或修改标准化检查对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-         <el-form-item label="检查人编码" v-show="form.checkaccount !=null" prop="checkaccount">
+         <el-form-item label="检查人编码" v-show="showPerson" prop="checkaccount">
           <el-input
             v-model="form.checkaccount"
             placeholder="请输入检查人编码"
           />
         </el-form-item>
 
-        <el-form-item label="检查人" v-show="form.checkperson !=null" prop="checkperson">
+        <el-form-item label="检查人" v-show="showPerson" prop="checkperson">
           <el-input
             v-model="form.checkperson"
             placeholder="请输入检查人姓名"
@@ -642,6 +642,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      showPerson:false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -897,6 +898,7 @@ export default {
         checkdate: defaultDate,
         checkmoddate: defaultDate,
       };
+      this.showPerson=false; 
       this.open = true;
       this.title = "添加标准化检查";
     },
@@ -904,6 +906,7 @@ export default {
     handleUpdate(row) {
      
       this.reset();
+      this.showPerson=false; 
       const id = row.id || this.ids;
       getBzhjc(id).then((response) => {
         if(response.data.status!="等待处理"){
@@ -927,8 +930,10 @@ export default {
      
       this.reset();
       const id = row.id || this.ids;
-      getBzhjc(id).then((response) => {    
+      getBzhjc(id).then((response) => {   
+        
         this.form = response.data;
+        this.showPerson=true; 
         this.open = true;
         this.title = "修改标准化检查";
       });

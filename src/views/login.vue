@@ -101,7 +101,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 20210426 炼钢设备科 All Rights Reserved.</span>
+      <span>Copyright © 20210426 作者：任春旺 All Rights Reserved. 本机时间：{{ time }}</span>
     </div>
   </div>
 </template>
@@ -109,6 +109,7 @@
 <script>
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
+import dayjs from 'dayjs';
 import { encrypt, decrypt } from '@/utils/jsencrypt'
 
 export default {
@@ -117,6 +118,8 @@ export default {
     return {
       codeUrl: "",
       cookiePassword: "",
+      timeInterval: null,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       loginForm: {
         // username: "admin",
         // password: "admin123",
@@ -155,6 +158,14 @@ export default {
     //this.getCode();
     this.getCookie();
   },
+  mounted () {
+    this.timeInterval = setInterval(() => {
+      this.refreshTime()
+    }, 1000)
+  },
+  beforeDestroy () {
+    clearInterval(this.timeInterval)
+  },
   methods: {
     getCode() {
       getCodeImg().then(res => {
@@ -164,6 +175,9 @@ export default {
           this.loginForm.uuid = res.uuid;
         }
       });
+    },
+    refreshTime () {
+      this.time = dayjs().format('YYYY-MM-DD HH:mm:ss')
     },
     getCookie() {
       const username = Cookies.get("username");

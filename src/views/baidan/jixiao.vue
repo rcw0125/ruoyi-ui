@@ -271,32 +271,26 @@ export default {
            value: '冶炼车间',
           label: '冶炼车间'
         }, {
-             value: '精炼车间',
-          label: '精炼车间'
-        }, {
+        
              value: '连铸车间',
           label: '连铸车间'
         }, {
-             value: '脱硫车间',
-          label: '脱硫车间'
+             value: '炉渣车间',
+          label: '炉渣车间'
         }, {
-             value: '冶炼维修车间',
-          label: '冶炼维修车间'
+             value: '维修车间',
+          label: '维修车间'
         }, {
-             value: '连铸维修车间',
-          label: '连铸维修车间'
-        }, {
+            
              value: '运行车间',
           label: '运行车间'
         }, {
-          value: '生产技术科',
-          label: '生产技术科'
-        }, {
+          
           value: '安全科',
           label: '安全科'
         }, {
-          value: '综合办公室',
-          label: '综合办公室'
+          value: '综合科',
+          label: '综合科'
         }],
 
       khtypeOptions: [{

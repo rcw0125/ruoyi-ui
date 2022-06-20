@@ -30,7 +30,9 @@ import ImageUpload from "@/components/ImageUpload"
 import DictTag from '@/components/DictTag'
 // 头部标签组件
 import VueMeta from 'vue-meta'
-
+import * as  echarts from 'echarts'
+//全局引入echarts2021-04-17
+Vue.prototype.$echarts = echarts
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey

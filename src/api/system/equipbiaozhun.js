@@ -39,6 +39,50 @@ export function listDeptRate(query) {
 
 
 
+// 查询点检标准列表--月明细
+export function listZhouMingXi(query) {
+  return request({
+    url: '/system/equipbiaozhun/ZhouMingXiList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询点检标准列表--月班组点检率
+export function listZhouTeamRate(query) {
+  return request({
+    url: '/system/equipbiaozhun/ZhouTeamList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询点检标准列表--月车间点检率
+export function listZhouDeptRate(query) {
+  return request({
+    url: '/system/equipbiaozhun/ZhouDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 将设备从我的设备移除
+export function delMyDianJian(query) {
+  return request({
+    url: '/system/mydianjian/delMyDianJian?bzid='+query,
+    method: 'get',
+  })
+}
+
+// 添加设备到我的设备
+export function addMyDianJian(query) {
+  return request({
+    url: '/system/mydianjian/addMyDianJian?ids='+query,
+    method: 'get',
+  })
+}
+
 // 根据部门查询岗位列表
 export function getPostinfo(query) {
   return request({
@@ -60,6 +104,15 @@ export function listMyEquipbiaozhun(query) {
 export function listMydianjian(query) {
   return request({
     url: '/system/equipbiaozhun/myDianJianList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 配置我的设备列表，查询属于我的班组，但不属于我的设备
+export function notMyDianJianList(query) {
+  return request({
+    url: '/system/equipbiaozhun/notMyDianJianList',
     method: 'get',
     params: query
   })

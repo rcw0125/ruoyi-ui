@@ -39,7 +39,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="车间" prop="dept">
-        <el-select v-model="queryParams.dept" placeholder="请选择车间" clearable size="small">
+        <el-select v-model="queryParams.dept" placeholder="请选择车间"  @change="handleQuery" clearable size="small">
           <el-option
             v-for="dict in deptOptions"
             :key="dict.dictValue"
@@ -297,7 +297,7 @@ export default {
     this.getDicts("jiezhileixing").then(response => {
       this.leibieOptions = response.data;
     });
-    this.getDicts("lgdept").then(response => {
+    this.getDicts("dianliangdept").then(response => {
       this.deptOptions = response.data;
     });
     this.getDicts("datafrom").then(response => {

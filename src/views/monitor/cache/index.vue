@@ -63,6 +63,8 @@
         </el-card>
       </el-col>
     </el-row>
+    <!-- echarts图形控件 -->
+    <div ref="myChart" :style="{width: '95%', height: '200px'}"></div>
   </div>
 </template>
 
@@ -80,6 +82,8 @@ export default {
       commandstats: null,
       // 使用内存
       usedmemory: null,
+
+      myChart: null,
       // cache信息
       cache: [],
     };
@@ -88,6 +92,10 @@ export default {
     this.getList();
     this.openLoading();
   },
+   mounted(){
+    //this.getList();
+     //this.drawLinetwo();
+  },
   methods: {
     /** 查缓存询信息 */
     getList() {
@@ -95,7 +103,7 @@ export default {
         this.cache = response.data;
         this.loading.close();
 
-        this.commandstats = echarts.init(this.$refs.commandstats, "macarons");
+        this.commandstats =  this.$echarts.init(this.$refs.commandstats, "macarons");
         this.commandstats.setOption({
           tooltip: {
             trigger: "item",
@@ -114,7 +122,7 @@ export default {
             },
           ],
         });
-        this.usedmemory = echarts.init(this.$refs.usedmemory, "macarons");
+        this.usedmemory =  this.$echarts.init(this.$refs.usedmemory, "macarons");
         this.usedmemory.setOption({
           tooltip: {
             formatter: "{b} <br/>{a} : " + this.cache.info.used_memory_human,
@@ -138,7 +146,67 @@ export default {
           ],
         });
       });
+
+     //this.drawLinetwo();
+
     },
+
+    drawLinetwo(){
+        
+        // 基于准备好的dom，初始化echarts实例
+        this.myChart =  this.$echarts.init(this.$refs.myChart, "macarons")
+        // 绘制图表
+        this.myChart.setOption({
+       type: 'gauge',
+      axisLine: {
+        lineStyle: {
+          width: 30,
+          color: [
+            [0.3, '#67e0e3'],
+            [0.7, '#37a2da'],
+            [1, '#fd666d']
+          ]
+        }
+      },
+      pointer: {
+        itemStyle: {
+          color: 'auto'
+        }
+      },
+      axisTick: {
+        distance: -30,
+        length: 8,
+        lineStyle: {
+          color: '#fff',
+          width: 2
+        }
+      },
+      splitLine: {
+        distance: -30,
+        length: 30,
+        lineStyle: {
+          color: '#fff',
+          width: 4
+        }
+      },
+      axisLabel: {
+        color: 'auto',
+        distance: 40,
+        fontSize: 20
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value} km/h',
+        color: 'auto'
+      },
+      data: [
+        {
+          value: 70
+        }
+      ]
+    });  
+        //myChart.resize();
+       },
     // 打开加载层
     openLoading() {
       this.loading = this.$loading({

@@ -10,6 +10,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+       <el-form-item label="分级" prop="fenji">
+        <el-select v-model="queryParams.fenji" placeholder="请选择分级" clearable size="small">
+          <el-option
+            v-for="dict in fenjiOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictLabel"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
 	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -53,7 +63,7 @@
        <el-table-column label="设备id" align="center" prop="id" />
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <!-- <el-table-column label="部件名称" align="center" prop="note" /> -->
-      <el-table-column label="创建时间" align="center" prop="createTime" width="200">
+      <!-- <el-table-column label="创建时间" align="center" prop="createTime" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -62,8 +72,12 @@
         <template slot-scope="scope">
           <dict-tag :options="statusOptions" :value="scope.row.status"/>
         </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      </el-table-column> -->
+       <el-table-column label="分级" align="center" prop="fenji" />
+      <el-table-column label="关注参数" align="center" prop="yxcs" width="250" :show-overflow-tooltip="true"/>
+      <el-table-column label="包保人" align="center" prop="baobaoren" />
+      <!-- <el-table-column label="汇总" align="center" prop="huizong" /> -->
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -101,6 +115,22 @@
         </el-form-item>
         <el-form-item label="设备名称" prop="name">
           <el-input v-model="form.name" disabled placeholder="请输入区域名称" />
+        </el-form-item>
+         <el-form-item label="分级" prop="fenji">
+          <el-select v-model="form.fenji" placeholder="请选择分级">
+            <el-option
+              v-for="dict in fenjiOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictLabel"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="关注参数" prop="yxcs">
+          <el-input v-model="form.yxcs" type="textarea" rows="4" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="包保人" prop="baobaoren">
+          <el-input v-model="form.baobaoren" placeholder="请输入包保人" />
         </el-form-item>
         <el-form-item label="显示顺序" prop="orderNum">
           <el-input v-model="form.orderNum" placeholder="请输入显示顺序" />
@@ -158,9 +188,12 @@ export default {
       isExpandAll:false,
       // 状态数据字典
       statusOptions: [],
+       // 分级字典
+      fenjiOptions: [],
       // 查询参数
       queryParams: {
         name: null,
+        fenji: null,
       },
       // 表单参数
       form: {},
@@ -172,6 +205,9 @@ export default {
         note: [
           { required: true, message: "描述不能为空", trigger: "blur" }
         ],
+         fenji: [
+          { required: true, message: "分级不能为空", trigger: "change" }
+        ],
       }
     };
   },
@@ -179,6 +215,9 @@ export default {
     this.getList();
     this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data;
+    });
+    this.getDicts("djdengji").then(response => {
+      this.fenjiOptions = response.data;
     });
   },
   methods: {
