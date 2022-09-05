@@ -1,6 +1,17 @@
 <template>
   <div class="app-container">
    
+      <el-menu
+            mode="horizontal"
+            class="el-menu-demo"
+            default-active="1-1-1-1"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b">
+            <!-- 引入组件 -->
+            <menu-tree :menuData="menuList"></menu-tree>
+          </el-menu>
+
         
     <div class="continer">    
      <section class="content-box">
@@ -78,6 +89,7 @@
 import itemBox from "@/components/itemBox";
 import TsccGaugeChart from "@/components/charts/TsccGaugeChart";
 import Tinymce from "@/components/tinymce";
+import MenuTree from '@/components/MenuTree'
 import {  addNotice } from "@/api/system/notice";
 // import EditorDialog from './editor-dialog';
 
@@ -92,6 +104,59 @@ export default {
         noticeTitle: "",
         noticeType:1,
       },
+       menuList: [
+        {
+          index: '1',
+          icon: 'el-icon-menu',
+          name: '一级菜单01',
+          children: [
+            {
+              index: '1-1',
+              icon: 'el-icon-film',
+              name: '二级菜单01',
+              children: [
+                {
+                  index: '1-1-1',
+                  icon: 'el-icon-date',
+                  name: '三级菜单01',
+                  children: [
+                    {
+                      index: '1-1-1-1',
+                      icon: 'el-icon-monitor',
+                      name: '四级菜单01'
+                    }
+                  ]
+                },
+                {
+                  index: '1-1-2',
+                  icon: 'el-icon-headset',
+                  name: '三级菜单02'
+                }
+              ]
+            },
+            {
+              index: '1-2',
+              icon: 'el-icon-data-line',
+              name: '二级菜单02'
+            }
+          ]
+        },
+        {
+          index: '2',
+          icon: 'el-icon-s-data',
+          name: '一级菜单02'
+        },
+        {
+          index: '3',
+          icon: 'el-icon-s-operation',
+          name: '一级菜单03'
+        },
+        {
+          index: '4',
+          icon: 'el-icon-user',
+          name: '一级菜单04'
+        }
+      ],
        // 仪表盘
       tsccGaugeData: 90.5,
       tsccGaugeRequiredSettings: {
@@ -134,6 +199,7 @@ export default {
     itemBox,
     TsccGaugeChart,
     Tinymce,
+    MenuTree,
   },
   methods: {
     change(val) {

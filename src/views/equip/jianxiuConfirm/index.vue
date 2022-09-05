@@ -238,11 +238,14 @@
         <el-form-item label="登记时间" v-show="false" prop="djtime">
           <el-input v-model="form.djtime" placeholder="请输入登记时间" />
         </el-form-item>
-        <el-form-item label="检修计划内容" prop="jxnr">
+        <el-form-item label="检修计划项目" prop="jxnr">
           <el-input v-model="form.jxnr" type="textarea"  readonly :rows="5" placeholder="请输入检修内容" />
         </el-form-item>
-        <el-form-item label="检修实际描述" prop="jxms">
-          <el-input v-model="form.jxms" type="textarea"  :rows="5" placeholder="请输入检修描述" />
+        <el-form-item label="检修实际内容" prop="jxms">
+          <el-input v-model="form.jxms" type="textarea"  :rows="5" placeholder="请输入检修实际内容" />
+        </el-form-item>
+        <el-form-item label="检修人"  prop="jxr">
+          <el-input v-model="form.jxr" readonly placeholder="请输入检修人" />
         </el-form-item>
         <!-- <el-form-item label="检修时间" v-show="false" prop="jxtime">
           <el-input v-model="form.jxtime" placeholder="请输入检修时间" />
@@ -275,6 +278,7 @@ export default {
   data() {
     return {
       // 遮罩层
+      userName:"",
       loading: true,
       // 导出遮罩层
       exportLoading: false,
@@ -365,7 +369,7 @@ export default {
 
      getUser() {
       getUserProfile().then(response => {
-       
+        this.userName=response.data.nickName;
         this.dept=response.data.dept.deptName;
         this.team=response.postGroup;
         console.log(this.dept+this.team);
@@ -430,6 +434,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+     
       this.open = true;
       this.title = "添加计划检修";
     },
@@ -439,6 +444,7 @@ export default {
       const id = row.id || this.ids
       getJianxiu(id).then(response => {
         this.form = response.data;
+        this.form.jxr=this.userName;
         this.open = true;
         this.form.status="检修完成";
         this.title = "执行计划检修";

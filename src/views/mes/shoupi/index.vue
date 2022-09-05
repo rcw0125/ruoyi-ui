@@ -138,6 +138,7 @@
       <el-table-column label="铁耗" align="center" prop="tiehao" width="66"/>
       <el-table-column label="氧气消耗" align="center" prop="yangqi" width="75"/>
       <el-table-column label="转炉石灰" align="center" prop="bofshihui" width="75"/>
+      <el-table-column label="烧结返矿" align="center" prop="shaojiefankuang" width="90"/>
       <el-table-column label="精炼石灰" align="center" prop="lfshihui" width="75"/>
       <el-table-column label="转炉合金" align="center" prop="bofalloy" width="75"/>
       <el-table-column label="精炼合金" align="center" prop="lfalloy" width="75"/>

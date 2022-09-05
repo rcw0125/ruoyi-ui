@@ -126,6 +126,7 @@ export default {
     },
     // 上传成功回调
     handleUploadSuccess(res) {
+      console.log(res);
       //this.fileList.push({ name: res.fileName, url: res.fileName });
       //2、res.fileName 改为 res.url  2021-09-16
      this.fileList.push({ name: res.fileName, url: res.url });

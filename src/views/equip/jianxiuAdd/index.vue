@@ -100,13 +100,13 @@
         <el-form-item label="登记时间" v-show="false" prop="djtime">
           <el-input v-model="form.djtime" placeholder="请输入登记时间" />
         </el-form-item>
-        <el-form-item label="检修内容" prop="jxnr">
+        <el-form-item label="计划检项目" prop="jxnr">
           <el-input v-model="form.jxnr" type="textarea"  :rows="5" placeholder="请输入检修内容" />
         </el-form-item>
         <!-- <el-form-item label="检修描述" v-show="false" prop="jxms">
           <el-input v-model="form.jxms" type="textarea"  :rows="5" placeholder="请输入检修描述" />
         </el-form-item> -->
-        <el-form-item label="检修时间" v-show="false" prop="jxtime">
+        <el-form-item label="计划检修时间" v-show="false" prop="jxtime">
           <el-input v-model="form.jxtime" placeholder="请输入检修时间" />
         </el-form-item>
         <el-form-item v-show="false" label="状态">
